@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background-color: #f8f9fa;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0 rounded-lg" style="background: linear-gradient(145deg, #f0f8ff 0%, #e6f7ff 100%);">
+                <!-- Encabezado -->
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #1a3a8f 0%, #0c6e4e 100%);">
+                    <h1 class="mb-0 text-white" style="font-family: 'Arial', sans-serif; font-weight: 700; font-size: 2.5rem;">
+                        <i class="fas fa-trash-alt me-2"></i>
+                        Eliminar Registros
+                    </h1>
+                    <p class="text-white mb-0 mt-2">
+                        Busca y elimina registros de salud mental o redes sociales
+                    </p>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Formulario de búsqueda -->
+                    <div class="card mb-4 border-0 shadow-sm" style="background-color: #e6f0ff;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #4fc3f7 0%, #81c784 100%);">
+                            <h2 class="h5 mb-0 text-white">
+                                <i class="fas fa-search me-2"></i>Buscar Registro
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="searchForm" class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="type" class="form-label">Tipo de Registro</label>
+                                    <select class="form-select" id="type" required style="border-color: #4fc3f7;">
+                                        <option value="">Selecciona una opción</option>
+                                        <option value="mental_health">Salud Mental</option>
+                                        <option value="social_media">Redes Sociales</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id" class="form-label">ID del Registro</label>
+                                    <input type="number" class="form-control" id="id" required style="border-color: #4fc3f7;">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-blue w-100">
+                                        <i class="fas fa-search me-1"></i> Buscar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="searchResults" class="mb-4"></div>
+
+                    <!-- Vista previa del registro -->
+                    <div id="recordPreview" class="card border-0 shadow-lg rounded-4 d-none" style="background-color: #e6f0ff;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);">
+                            <h3 class="h5 mb-0 text-white">
+                                <i class="fas fa-exclamation-triangle me-2"></i> Confirmar Eliminación
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="previewContent" class="mb-4"></div>
+                            <form id="deleteForm" method="POST">
+                                <input type="hidden" id="deleteType" name="type">
+                                <input type="hidden" id="deleteId" name="id">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" id="cancelDelete" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times-circle me-1"></i> Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt me-1"></i> Confirmar Eliminación
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .record-img-container {
+        width: 100%;
+        height: 250px;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 3px solid #4fc3f7;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .record-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        border: none;
+        transition: all 0.3s;
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+    }
+
+    .detail-section {
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+    }
+
+    .detail-item {
+        padding: 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #1a3a8f;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .detail-value {
+        color: #333;
+        word-break: break-word;
+    }
+
+    .range-indicator-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 5px;
+    }
+
+    .range-value {
+        font-weight: 600;
+        color: #1a3a8f;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .range-indicator {
+        flex-grow: 1;
+        height: 10px;
+        background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
+        border-radius: 5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .range-indicator::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: calc(var(--value-percent) - 3px);
+        width: 6px;
+        height: 100%;
+        background-color: #1a3a8f;
+        border-radius: 3px;
+    }
+
+    .platform-badge {
+        background-color: #e6f0ff;
+        color: #1a3a8f;
+        border-radius: 12px;
+        padding: 4px 10px;
+        margin: 2px;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .record-img-container {
+            height: 200px;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Buscar registro por ID
+    document.getElementById('searchForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const type = document.getElementById('type').value;
+        const id = document.getElementById('id').value;
+        const resultsDiv = document.getElementById('searchResults');
+
+        resultsDiv.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Buscando...</span>
+                </div>
+                <p class="mt-2 text-primary">Buscando registro...</p>
+            </div>`;
+
+        try {
+            const response = await fetch(`/${type}/${id}`);
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
+            const data = await response.json();
+            displayRecordPreview(data, type);
+        } catch (error) {
+            resultsDiv.innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error: ${error.message || 'Registro no encontrado'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+        }
+    });
+
+    // Mostrar vista previa del registro
+    function displayRecordPreview(data, type) {
+        const previewDiv = document.getElementById('recordPreview');
+        const previewContent = document.getElementById('previewContent');
+
+        let html = `
+            <div class="text-center mb-4">
+                <h3 class="text-primary">
+                    <i class="${type === 'mental_health' ? 'fas fa-brain' : 'fas fa-share-alt'} me-2"></i>
+                    ${type === 'mental_health' ? 'Registro de Salud Mental' : 'Registro de Redes Sociales'}
+                </h3>
+                <p class="text-muted">ID: ${data.id}</p>
+            </div>
+
+            <div class="record-img-container">
+                <img src="${data.image_url}" alt="Imagen del registro" class="record-img" onerror="this.src='/static/images/default-image.jpg'">
+            </div>
+
+            <div class="detail-section">
+                <h4 class="text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Información Básica</h4>
+                <div class="detail-grid">
+        `;
+
+        // Campos comunes
+        html += `
+                    <div class="detail-item">
+                        <span class="detail-label">Fecha:</span>
+                        <span class="detail-value">${data.date}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Edad:</span>
+                        <span class="detail-value">${data.age} años</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Género:</span>
+                        <span class="detail-value">${data.gender}</span>
+                    </div>
+        `;
+
+        if (type === 'mental_health') {
+            html += `
+                    <div class="detail-item">
+                        <span class="detail-label">Estado Civil:</span>
+                        <span class="detail-value">${data.relationship_status}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4 class="text-primary mb-3"><i class="fas fa-chart-line me-2"></i>Indicadores de Salud Mental</h4>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Nivel de Preocupación:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.bothered_by_worries}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.bothered_by_worries/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dificultad para Concentrarse:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.difficulty_concentrating}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.difficulty_concentrating/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Comparación con Otros:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.comparison_feelings}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.comparison_feelings/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Sentimientos de Depresión:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.feel_depressed}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.feel_depressed/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Cambios en el Interés:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.fluctuation_interest}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.fluctuation_interest/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Problemas de Sueño:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.sleep_issues}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.sleep_issues/5)*100}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        } else {
+            // Mostrar campos de redes sociales
+            const platforms = Array.isArray(data.platforms_used) ?
+                data.platforms_used.map(p => `<span class="platform-badge">${p}</span>`).join(' ') :
+                `<span class="platform-badge">${data.platforms_used}</span>`;
+
+            html += `
+                    <div class="detail-item">
+                        <span class="detail-label">Ocupación:</span>
+                        <span class="detail-value">${data.occupation_status}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Organización:</span>
+                        <span class="detail-value">${data.organization_affiliation || 'No especificado'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Usa redes sociales:</span>
+                        <span class="detail-value">${data.uses_social_media}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4 class="text-primary mb-3"><i class="fas fa-mobile-alt me-2"></i>Uso de Redes Sociales</h4>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Plataformas usadas:</span>
+                        <div class="detail-value">${platforms}</div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Uso diario promedio:</span>
+                        <span class="detail-value">${data.daily_use_average}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4 class="text-primary mb-3"><i class="fas fa-chart-bar me-2"></i>Hábitos y Comportamientos</h4>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Uso sin propósito:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.usage_without_purpose}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.usage_without_purpose/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Distracción cuando ocupado:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.distraction_when_busy}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.distraction_when_busy/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Inquietud sin redes:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.restless_without_social_media}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.restless_without_social_media/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Facilidad para distraerse:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.easily_distracted}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.easily_distracted/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Comparación con exitosos:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.compare_with_successful_people}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.compare_with_successful_people/5)*100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Búsqueda de validación:</span>
+                        <div class="range-indicator-container">
+                            <span class="range-value">${data.seek_validation}</span>
+                            <div class="range-indicator" style="--value-percent: ${(data.seek_validation/5)*100}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        previewContent.innerHTML = html;
+        document.getElementById('deleteType').value = type;
+        document.getElementById('deleteId').value = data.id;
+        previewDiv.classList.remove('d-none');
+        document.getElementById('searchResults').innerHTML = '';
+    }
+
+    // Cancelar eliminación
+    document.getElementById('cancelDelete').addEventListener('click', function() {
+        document.getElementById('recordPreview').classList.add('d-none');
+    });
+
+    // Enviar formulario de eliminación
+    document.getElementById('deleteForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const type = document.getElementById('deleteType').value;
+        const id = document.getElementById('deleteId').value;
+
+        try {
+            const response = await fetch(`/${type}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id=${id}`
+            });
+
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
+
+            const result = await response.json();
+            showAlert('success', result.message);
+            document.getElementById('recordPreview').classList.add('d-none');
+            document.getElementById('searchForm').reset();
+        } catch (error) {
+            showAlert('danger', error.message || 'Error al eliminar el registro');
+        }
+    });
+
+    // Mostrar alertas
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.getElementById('searchResults').appendChild(alertDiv);
+    }
+});
+</script>
+{% endblock %}
