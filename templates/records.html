@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if tipo == "mental_health" %}
+        🧠 Registros de Salud Mental
+    {% else %}
+        🌐 Registros de Redes Sociales
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Encabezado Dinámico -->
+    <div class="header-section mb-5 p-4 rounded-4"
+         style="background: linear-gradient(135deg, #1a3a8f 0%, #0c6e4e 100%);">
+        <h2 class="display-5 fw-bold text-center text-white mb-3"
+            style="text-shadow: 1px 1px 4px rgba(0,0,0,0.4);">
+            {% if tipo == "mental_health" %}
+                Registros de Salud Mental
+            {% else %}
+                Registros de Redes Sociales
+            {% endif %}
+        </h2>
+        <p class="text-center text-light mb-0">
+            {% if tipo == "mental_health" %}
+                Explora todos los registros sobre el estado emocional y mental de los participantes
+            {% else %}
+                Explora todos los registros sobre el uso y hábitos en redes sociales de los participantes
+            {% endif %}
+        </p>
+    </div>
+
+    {% if tipo == "mental_health" %}
+    <!-- Sección Salud Mental -->
+    <div class="mb-5">
+        <h3 class="fw-bold text-primary mb-4">
+            <i class="fas fa-brain me-2"></i>Registros de Salud Mental
+        </h3>
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
+            <div class="card-body p-0">
+                <div class="table-responsive" style="overflow-x: auto;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-primary bg-opacity-10">
+                            <tr>
+                                <th class="ps-4">#</th>
+                                <th>Fecha</th>
+                                <th>Edad</th>
+                                <th>Género</th>
+                                <th>Estado de relación sentimental</th>
+                                <th>Se siente preocupado/a</th>
+                                <th>Dificultad para concentrarse</th>
+                                <th>Sentimientos de comparación</th>
+                                <th>Sentimientos de depresión</th>
+                                <th>Cambios en interés o motivación</th>
+                                <th>Problemas para dormir</th>
+                                <th class="text-center">Imagen<br>asociada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                            <tr class="hover-highlight">
+                                <td class="fw-bold ps-4">{{ record.id }}</td>
+                                <td>{{ record.date }}</td>
+                                <td>{{ record.age }}</td>
+                                <td>{{ record.gender }}</td>
+                                <td>{{ record.relationship_status }}</td>
+
+                                {% set progress_fields = [
+                                  ('bothered_by_worries', record.bothered_by_worries),
+                                  ('difficulty_concentrating', record.difficulty_concentrating),
+                                  ('comparison_feelings', record.comparison_feelings),
+                                  ('feel_depressed', record.feel_depressed),
+                                  ('fluctuation_interest', record.fluctuation_interest),
+                                  ('sleep_issues', record.sleep_issues)
+                                ] %}
+                                {% for field, value in progress_fields %}
+                                    {% set width = (value | default(0) | int) * 20 %}
+                                    <td>
+                                        <div class="progress fixed-width-progress position-relative" style="height: 20px;">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ width }}%;"></div>
+                                            <span class="progress-text">{{ value | default(0) }}/5</span>
+                                        </div>
+                                    </td>
+                                {% endfor %}
+
+                                <td class="text-center">
+                                    <img src="{{ record.image_url }}"
+                                         alt="Imagen Registro #{{ record.id }}"
+                                         class="img-thumbnail rounded-3 gallery-img"
+                                         style="width: 60px; height: 60px; object-fit: cover;"
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#imageModal"
+                                         data-bs-img="{{ record.image_url }}"
+                                         data-bs-title="Registro #{{ record.id }} - Salud Mental">
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="12" class="text-center text-muted py-3">
+                                    No hay registros de Salud Mental disponibles.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Sección Redes Sociales -->
+    <div class="mb-5">
+        <h3 class="fw-bold text-success mb-4">
+            <i class="fas fa-share-alt me-2"></i>Registros de Redes Sociales
+        </h3>
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive" style="overflow-x: auto;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-success bg-opacity-10">
+                            <tr>
+                                <th class="ps-4">#</th>
+                                <th>Fecha</th>
+                                <th>Edad</th>
+                                <th>Género</th>
+                                <th>Estado ocupacional</th>
+                                <th>Afiliación a organización</th>
+                                <th>Uso de redes sociales</th>
+                                <th>Plataformas utilizadas</th>
+                                <th>Promedio de uso diario</th>
+                                <th>Uso sin propósito</th>
+                                <th>Distracción estando ocupado/a</th>
+                                <th>Inquietud sin redes</th>
+                                <th>Facilidad para distraerse</th>
+                                <th>Comparación con exitosos</th>
+                                <th>Búsqueda de validación</th>
+                                <th class="text-center">Imagen<br>asociada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                            <tr class="hover-highlight">
+                                <td class="fw-bold ps-4">{{ record.id }}</td>
+                                <td>{{ record.date }}</td>
+                                <td>{{ record.age }}</td>
+                                <td>{{ record.gender }}</td>
+                                <td>{{ record.occupation_status }}</td>
+                                <td>{{ record.organization_affiliation or '\u2014' }}</td>
+                                <td>{{ record.uses_social_media }}</td>
+                                <td>{{ record.platforms_used }}</td>
+                                <td>{{ record.daily_use_average }}</td>
+
+                                {% set progress_fields = [
+                                  ('usage_without_purpose', record.usage_without_purpose),
+                                  ('distraction_when_busy', record.distraction_when_busy),
+                                  ('restless_without_social_media', record.restless_without_social_media),
+                                  ('easily_distracted', record.easily_distracted),
+                                  ('compare_with_successful_people', record.compare_with_successful_people),
+                                  ('seek_validation', record.seek_validation)
+                                ] %}
+                                {% for field, value in progress_fields %}
+                                    {% set width = (value | default(0) | int) * 20 %}
+                                    <td>
+                                        <div class="progress fixed-width-progress position-relative" style="height: 20px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ width }}%;"></div>
+                                            <span class="progress-text">{{ value | default(0) }}/5</span>
+                                        </div>
+                                    </td>
+                                {% endfor %}
+
+                                <td class="text-center">
+                                    <img src="{{ record.image_url }}"
+                                         alt="Imagen Registro #{{ record.id }}"
+                                         class="img-thumbnail rounded-3 gallery-img"
+                                         style="width: 60px; height: 60px; object-fit: cover;"
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#imageModal"
+                                         data-bs-img="{{ record.image_url }}"
+                                         data-bs-title="Registro #{{ record.id }} - Redes Sociales">
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="16" class="text-center text-muted py-3">
+                                    No hay registros de Redes Sociales disponibles.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para visualizar imágenes -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0">
+            <div class="modal-header {% if tipo == "mental_health" %}bg-primary{% else %}bg-success{% endif %} text-white">
+                <h5 class="modal-title" id="modalImageTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img id="modalImage" src="" class="img-fluid" style="max-height: 70vh; width: auto;">
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn {% if tipo == "mental_health" %}btn-primary{% else %}btn-success{% endif %}" data-bs-dismiss="modal">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos adicionales -->
+<style>
+    :root {
+        --primary: #1a3a8f;
+        --success: #0c6e4e;
+    }
+
+    .header-section {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th,
+    .table td {
+        white-space: nowrap;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .fixed-width-progress {
+        width: 150px;
+        margin: auto;
+        background-color: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .fixed-width-progress .progress-bar {
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+
+    .fixed-width-progress .progress-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+    }
+
+    .img-thumbnail {
+        border: 2px solid #e9ecef;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: zoom-in;
+    }
+
+    .img-thumbnail:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .gallery-img {
+        cursor: pointer;
+    }
+
+    .hover-highlight:hover {
+        background-color: rgba(233, 233, 233, 0.2) !important;
+    }
+</style>
+
+<!-- Script para cargar la imagen en el modal -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var imageModal = document.getElementById('imageModal');
+    imageModal.addEventListener('show.bs.modal', function (event) {
+        var trigger = event.relatedTarget;
+        var imgSrc = trigger.getAttribute('data-bs-img');
+        var imgTitle = trigger.getAttribute('data-bs-title');
+
+        imageModal.querySelector('#modalImage').src = imgSrc;
+        imageModal.querySelector('#modalImage').alt = imgTitle;
+        imageModal.querySelector('.modal-title').textContent = imgTitle;
+    });
+});
+</script>
+{% endblock %}
