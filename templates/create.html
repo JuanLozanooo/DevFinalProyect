@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Nuevos registros{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background-color: #f8f9fa;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0 rounded-lg" style="background: linear-gradient(145deg, #f0f8ff 0%, #e6f7ff 100%);">
+                <!-- Título con fuente profesional -->
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #1a3a8f 0%, #0c6e4e 100%);">
+                    <h1 class="mb-0 text-white" style="font-family: 'Arial', sans-serif; font-weight: 700; font-size: 2.5rem;">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Crear Nuevo Registro
+                    </h1>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Selector de tipo -->
+                    <div class="card mb-4 border-0 shadow-sm" style="background-color: #e6f0ff;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #4fc3f7 0%, #81c784 100%);">
+                            <h2 class="h5 mb-0 text-white">
+                                <i class="fas fa-tag me-2"></i>Tipo de Registro
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <select id="recordType" class="form-select" style="border-color: #4fc3f7;">
+                                        <option value="mental_health"> Salud Mental</option>
+                                        <option value="social_media"> Redes Sociales</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario dinámico -->
+                    <div id="formContainer">
+                        <!-- Aquí se cargará el formulario correspondiente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --blue: #1a3a8f;
+        --light-blue: #4fc3f7;
+        --green: #0b7150;
+        --light-green: #81c784;
+        --bg-blue: #e6f0ff;
+    }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .text-blue {
+        color: var(--blue);
+    }
+
+    .text-green {
+        color: var(--green);
+    }
+
+    .btn-blue {
+        background: var(--blue);
+        color: white;
+        border: none;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .btn-green {
+        background: var(--green);
+        color: white;
+        border: none;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .btn-blue:hover {
+        background: #122a6f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 58, 143, 0.3);
+    }
+
+    .btn-green:hover {
+        background: #085d40;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(12, 110, 78, 0.3);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #1a3a8f;
+    }
+
+    .card {
+        border-radius: 12px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(79, 195, 247, 0.2);
+    }
+
+    .spinner-border {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .alert {
+        border-radius: 8px;
+    }
+
+    /* Efecto especial para el título */
+    .card-header h1 {
+        letter-spacing: 1px;
+        position: relative;
+        display: inline-block;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    /* Estilos para campos de formulario */
+    .form-control, .form-select {
+        border: 1px solid #ced4da;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #4fc3f7;
+        box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.25);
+    }
+
+    /* Íconos temáticos */
+    .fa-brain {
+        color: #1a3a8f;
+    }
+
+    .fa-share-alt {
+        color: #03d590;
+    }
+
+    /* Estilos para los controles de rango */
+    .range-container {
+        position: relative;
+        padding-bottom: 25px;
+    }
+
+    .range-values {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .range-values span {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .form-range {
+        height: 25px;
+    }
+
+    .form-range::-webkit-slider-thumb {
+        background: #4fc3f7;
+    }
+
+    .form-range::-moz-range-thumb {
+        background: #4fc3f7;
+    }
+
+    /* Mejoras visuales para select múltiple */
+    select[multiple] {
+        height: auto;
+        min-height: 100px;
+    }
+
+    /* Estilo para descripciones de campos */
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+</style>
+
+<script>
+    // Definición de los campos para cada tipo
+    const formFields = {
+        mental_health: [
+            {name: "date", label: "Fecha", type: "text", icon: "fas fa-calendar-alt", required: true, placeholder: "YYYY-MM-DD"},
+            {name: "age", label: "Edad", type: "number", icon: "fas fa-user", required: true, min: 13, max: 80, placeholder: "Edad en años"},
+            {name: "gender", label: "Género", type: "select", icon: "fas fa-venus-mars", required: true,
+             options: ["Masculino", "Femenino", "No binario", "Prefiero no decirlo"]},
+            {name: "relationship_status", label: "Estado Civil", type: "select", icon: "fas fa-heart", required: true,
+             options: ["Soltero/a", "En una relación", "Casado/a", "Divorciado/a", "Viudo/a", "Prefiero no decirlo"]},
+            {name: "bothered_by_worries", label: "Nivel de Preocupación", type: "range", icon: "fas fa-frown",
+             required: true, min: 1, max: 5, placeholder: "1: Muy bajo - 5: Muy alto",
+             description: "¿Qué tanto te molestan las preocupaciones?"},
+            {name: "difficulty_concentrating", label: "Dificultad para Concentrarte", type: "range", icon: "fas fa-brain",
+             required: true, min: 1, max: 5, placeholder: "1: Ninguna - 5: Extrema",
+             description: "¿Qué tan difícil es mantener la concentración?"},
+            {name: "comparison_feelings", label: "Comparación con Otros", type: "range", icon: "fas fa-balance-scale",
+             required: true, min: 1, max: 5, placeholder: "1: Nunca - 5: Constantemente",
+             description: "¿Con qué frecuencia te comparas con otros?"},
+            {name: "feel_depressed", label: "Sentimientos de Tristeza", type: "range", icon: "fas fa-sad-tear",
+             required: true, min: 1, max: 5, placeholder: "1: Nunca - 5: Muy frecuente",
+             description: "¿Con qué frecuencia te sientes triste o deprimido/a?"},
+            {name: "fluctuation_interest", label: "Cambios de Interés", type: "range", icon: "fas fa-chart-line",
+             required: true, min: 1, max: 5, placeholder: "1: Ninguno - 5: Muy frecuentes",
+             description: "¿Qué tan variables son tus niveles de interés en actividades?"},
+            {name: "sleep_issues", label: "Problemas de Sueño", type: "range", icon: "fas fa-bed",
+             required: true, min: 1, max: 5, placeholder: "1: Ninguno - 5: Muy graves",
+             description: "¿Qué tan graves son tus problemas para dormir?"},
+            {name: "image_file", label: "Imagen de Perfil", type: "file", icon: "fas fa-image",
+             required: true, accept: "image/*",
+             description: "Sube una imagen que represente tu estado de ánimo actual"}
+        ],
+        social_media: [
+            {name: "date", label: "Fecha", type: "text", icon: "fas fa-calendar-alt", required: true, placeholder: "YYYY-MM-DD"},
+            {name: "age", label: "Edad", type: "number", icon: "fas fa-user", required: true, min: 13, max: 80, placeholder: "Edad en años"},
+            {name: "gender", label: "Género", type: "select", icon: "fas fa-venus-mars", required: true,
+             options: ["Masculino", "Femenino", "No binario", "Prefiero no decirlo"]},
+            {name: "occupation_status", label: "Ocupación", type: "select", icon: "fas fa-briefcase", required: true,
+             options: ["Estudiante escolar", "Estudiante universitario", "Empleado tiempo completo",
+                      "Empleado medio tiempo", "Trabajador independiente", "Desempleado", "Jubilado"]},
+            {name: "organization_affiliation", label: "Institución/Empresa", type: "text", icon: "fas fa-building",
+             required: true, placeholder: "Nombre de tu institución educativa o empresa"},
+            {name: "uses_social_media", label: "¿Usas Redes Sociales?", type: "select", icon: "fas fa-check-circle",
+             required: true, options: ["Sí", "No"]},
+            {name: "platforms_used", label: "Plataformas que Usas", type: "select", icon: "fas fa-share-alt",
+             required: true, multiple: true,
+             options: ["Facebook", "Instagram", "Twitter", "TikTok", "LinkedIn", "YouTube",
+                       "WhatsApp", "Telegram", "Snapchat", "Pinterest", "Reddit", "Discord", "Otra"]},
+            {name: "daily_use_average", label: "Tiempo Promedio de Uso Diario", type: "select", icon: "fas fa-clock",
+             required: true,
+             options: ["Menos de 1 hora", "1-2 horas", "2-3 horas", "3-4 horas", "4-5 horas", "Más de 5 horas"]},
+            {name: "usage_without_purpose", label: "Uso Sin Propósito Específico", type: "range", icon: "fas fa-random",
+             required: true, min: 1, max: 5, placeholder: "1: Nunca - 5: Muy frecuentemente",
+             description: "¿Con qué frecuencia navegas sin un objetivo específico?"},
+            {name: "distraction_when_busy", label: "Distracción Durante Actividades", type: "range",
+             icon: "fas fa-exclamation-triangle", required: true, min: 1, max: 5,
+             placeholder: "1: Nunca - 5: Constantemente",
+             description: "¿Las redes sociales te distraen de tus actividades importantes?"},
+            {name: "restless_without_social_media", label: "Inquietud sin Redes Sociales", type: "range",
+             icon: "fas fa-mobile-alt", required: true, min: 1, max: 5,
+             placeholder: "1: Ninguna - 5: Extrema",
+             description: "¿Qué tan inquieto/a te sientes cuando no puedes usar redes sociales?"},
+            {name: "easily_distracted", label: "Facilidad de Distracción", type: "range", icon: "fas fa-eye-slash",
+             required: true, min: 1, max: 5, placeholder: "1: Muy baja - 5: Muy alta",
+             description: "¿Qué tan fácilmente te distraes con las notificaciones?"},
+            {name: "compare_with_successful_people", label: "Comparación con Personas Exitosas", type: "range",
+             icon: "fas fa-trophy", required: true, min: 1, max: 5,
+             placeholder: "1: Nunca - 5: Constantemente",
+             description: "¿Con qué frecuencia te comparas con personas exitosas en redes sociales?"},
+            {name: "seek_validation", label: "Búsqueda de Validación", type: "range", icon: "fas fa-heart",
+             required: true, min: 1, max: 5, placeholder: "1: Nunca - 5: Constantemente",
+             description: "¿Con qué frecuencia buscas validación a través de likes o comentarios?"},
+            {name: "image_file", label: "Imagen de Perfil", type: "file", icon: "fas fa-image",
+             required: true, accept: "image/*",
+             description: "Sube una imagen que represente tu uso de redes sociales"}
+        ]
+    };
+
+    // Cargar el formulario según el tipo seleccionado
+    function loadForm(type) {
+        const formContainer = document.getElementById('formContainer');
+        const fields = formFields[type];
+
+        let formHTML = `
+            <div class="card border-0 shadow-sm" style="background-color: #e6f0ff;">
+                <div class="card-header" style="background: ${type === 'mental_health' ? 'linear-gradient(135deg, #4fc3f7 0%, #81c784 100%);' : 'linear-gradient(135deg, #0c6e4e 0%, #81c784 100%);'}">
+                    <h2 class="h5 mb-0 text-white">
+                        <i class="${type === 'mental_health' ? 'fas fa-brain' : 'fas fa-share-alt'} me-2"></i>
+                        ${type === 'mental_health' ? 'Nuevo Registro de Salud Mental' : 'Nuevo Registro de Redes Sociales'}
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form id="createForm" class="row g-3" enctype="multipart/form-data">
+        `;
+
+        // Añadir campos al formulario
+        fields.forEach(field => {
+            formHTML += `
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label for="${field.name}" class="form-label">
+                            <i class="${field.icon} me-1"></i>${field.label}:
+                        </label>
+                        ${field.description ? `
+                        <small class="form-text text-muted d-block mb-2">
+                            <i class="fas fa-info-circle me-1"></i>${field.description}
+                        </small>
+                        ` : ''}
+            `;
+
+            if (field.type === 'select') {
+                if (field.multiple) {
+                    // Generar checkboxes para selección múltiple
+                    formHTML += `<div class="row">`;
+                    field.options.forEach(option => {
+                        const chkId = `${field.name}_${option.replace(/\s+/g, '')}`;
+                        formHTML += `
+                          <div class="col-6 col-md-4">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" name="${field.name}" id="${chkId}" value="${option}">
+                              <label class="form-check-label" for="${chkId}">${option}</label>
+                            </div>
+                          </div>
+                        `;
+                    });
+                    formHTML += `</div>`;
+                } else {
+                    formHTML += `
+                        <select id="${field.name}" name="${field.name}" class="form-select"
+                                style="border-color: #4fc3f7;" ${field.required ? 'required' : ''}>
+                        <option value="">Seleccione una opción</option>
+                    `;
+                    field.options.forEach(option => {
+                        formHTML += `<option value="${option}">${option}</option>`;
+                    });
+                    formHTML += `</select>`;
+                }
+            } else if (field.type === 'range') {
+                formHTML += `
+                    <div class="range-container">
+                        <input type="${field.type}"
+                               id="${field.name}"
+                               name="${field.name}"
+                               class="form-range"
+                               min="${field.min}"
+                               max="${field.max}"
+                               ${field.required ? 'required' : ''}>
+                        <div class="range-values">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted">${field.placeholder}</small>
+                `;
+            } else {
+                formHTML += `
+                    <input type="${field.type}"
+                           id="${field.name}"
+                           name="${field.name}"
+                           class="form-control"
+                           style="border-color: #4fc3f7;"
+                           ${field.required ? 'required' : ''}
+                           ${field.placeholder ? `placeholder="${field.placeholder}"` : ''}
+                           ${field.min ? `min="${field.min}"` : ''}
+                           ${field.max ? `max="${field.max}"` : ''}
+                           ${field.accept ? `accept="${field.accept}"` : ''}
+                           ${field.multiple ? 'multiple' : ''}>
+                `;
+            }
+
+            formHTML += `
+                    </div>
+                </div>
+            `;
+        });
+
+        // Botón de submit
+        formHTML += `
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn ${type === 'mental_health' ? 'btn-blue' : 'btn-green'} w-100">
+                                <i class="fas fa-save me-2"></i>Crear Registro
+                            </button>
+                        </div>
+                    </form>
+                    <div id="formResult" class="mt-3"></div>
+                </div>
+            </div>
+        `;
+
+        formContainer.innerHTML = formHTML;
+
+        // Manejar el envío del formulario
+        document.getElementById('createForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const resultDiv = document.getElementById('formResult');
+
+            resultDiv.innerHTML = `
+                <div class="text-center py-3">
+                    <div class="spinner-border ${type === 'mental_health' ? 'text-primary' : 'text-success'}" role="status">
+                        <span class="visually-hidden">Creando...</span>
+                    </div>
+                    <p class="mt-2 ${type === 'mental_health' ? 'text-primary' : 'text-success'}">Creando registro...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`/${type}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const result = await response.json();
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success" style="background-color: #d4edda; border-color: #c3e6cb; color: #155724;">
+                        <i class="fas fa-check-circle me-2"></i>
+                        ¡Registro creado con éxito! ID: ${result.id}
+                    </div>
+                `;
+                this.reset();
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        });
+    }
+
+    // Cargar el formulario inicial
+    document.addEventListener('DOMContentLoaded', () => {
+        loadForm('mental_health');
+    });
+
+    // Cambiar el formulario cuando cambia el tipo
+    document.getElementById('recordType').addEventListener('change', function() {
+        loadForm(this.value);
+    });
+</script>
+{% endblock %}
