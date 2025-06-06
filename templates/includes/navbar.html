@@ -1,0 +1,209 @@
+<nav class="navbar navbar-expand-lg" style="background: linear-gradient(135deg, #1a3a8f 0%, #0c6e4e 100%); box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+  <div class="container">
+    <!-- Logo centrado con icono -->
+    <a class="navbar-brand d-flex align-items-center mx-auto mx-lg-0" href="/">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-brain me-2" style="color: #4fc3f7; font-size: 1.8rem;"></i>
+        <div class="d-flex flex-column">
+          <div style="font-family: 'Arial', sans-serif; font-weight: 800; font-size: 1.5rem; line-height: 1; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">
+            <span style="color: #4fc3f7;">MENTAL</span>
+            <span style="color: #81c784;">HEALTH</span>
+          </div>
+          <div style="font-family: 'Arial', sans-serif; font-weight: 600; font-size: 0.9rem; color: #e0e0e0; margin-top: 0.2rem; letter-spacing: 0.5px;">
+            SOCIAL MEDIA ANALYTICS
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Botón hamburguesa con animación -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+      <span class="navbar-toggler-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </button>
+
+    <!-- Contenido del navbar -->
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <!-- Menú principal a la izquierda -->
+      <ul class="navbar-nav me-lg-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link px-3" href="/" style="color: white;">
+            <i class="fas fa-home me-1"></i> Inicio
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link px-3" href="/planning" style="color: white;">
+            <i class="fas fa-route me-1"></i> Planeamiento
+          </a>
+        </li>
+      </ul>
+
+      <!-- Menú central destacado -->
+      <div class="d-flex justify-content-center my-3 my-lg-0">
+        <div class="btn-group rounded-pill" role="group" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);">
+          <a href="/design" class="btn btn-sm px-3" style="color: white;">
+            <i class="fas fa-brush me-1"></i> Diseño
+          </a>
+          <a href="/goal" class="btn btn-sm px-3" style="color: white;">
+            <i class="fas fa-award me-1"></i> Objetivo
+          </a>
+        </div>
+      </div>
+
+      <!-- Menú derecho con dropdowns -->
+      <ul class="navbar-nav ms-lg-auto">
+        <li class="nav-item dropdown mx-lg-1">
+          <a class="nav-link dropdown-toggle px-3" href="#" role="button" data-bs-toggle="dropdown" style="color: white;">
+            <i class="fas fa-brain me-1" style="color: #4fc3f7;"></i> Salud Mental
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end p-2" style="border-radius: 12px; background-color: rgba(26, 58, 143, 0.98); border: 1px solid #4fc3f7; backdrop-filter: blur(10px);">
+            <li><a class="dropdown-item px-3 py-2 rounded-3" href="/mental_health"><i class="fas fa-bars-progress me-2"></i>Explorar</a></li>
+            <li><hr class="dropdown-divider my-2" style="border-color: #4fc3f7;"></li>
+            <li><a class="dropdown-item px-3 py-2 rounded-3" href="/create"><i class="fas fa-square-plus me-2"></i>Nuevo</a></li>
+            <li><a class="dropdown-item px-3 py-2 rounded-3" href="/update"><i class="fas fa-pen-clip me-2"></i>Modificar</a></li>
+            <li><a class="dropdown-item px-3 py-2 rounded-3" href="/delete"><i class="fas fa-eraser me-2"></i>Borrar</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown mx-lg-1">
+          <a class="nav-link dropdown-toggle px-3" href="#" role="button" data-bs-toggle="dropdown" style="color: white;">
+            <i class="fas fa-users me-1" style="color: #81c784;"></i> Redes Sociales
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end p-2" style="border-radius: 12px; background-color: rgba(12, 110, 78, 0.98); border: 1px solid #81c784; backdrop-filter: blur(10px);">
+            <li><a class="dropdown-item px-3 py-2 rounded-3" href="/social_media"><i class="fas fa-chart-line me-2"></i>Explorar</a></li>
+            <li><hr class="dropdown-divider my-2" style="border-color: #81c784;"></li>
+            <li><a class="dropdown-item px-3 py-2 rounded-3" href="/create"><i class="fas fa-square-plus me-2"></i>Nuevo</a></li>
+            <li><a class="dropdown-item px-3 py-2 rounded-3" href="/update"><i class="fas fa-pen-clip me-2"></i>Modificar</a></li>
+            <li><a class="dropdown-item px-3 py-2 rounded-3" href="/delete"><i class="fas fa-eraser me-2"></i>Borrar</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Botón developer con foto -->
+      <div class="d-flex ms-lg-3">
+        <a class="btn btn-developer d-flex align-items-center" href="/developer" style="border-radius: 50px; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);">
+          <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes//icon.png"
+               alt="Developer"
+               width="32"
+               height="32"
+               class="me-2"
+               style="object-fit: cover; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3);">
+          <span class="d-none d-lg-inline fw-bold" style="color: white;">Creador </span>
+          <i class="fas fa-spider ms-1" style="font-size: 0.8rem; color: white"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Estilos mejorados -->
+<style>
+  .navbar {
+    padding: 0.8rem 1rem;
+  }
+
+  .navbar-toggler-animation {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+  }
+
+  .navbar-toggler-animation span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background-color: white;
+    transition: all 0.3s ease;
+  }
+
+  .navbar-toggler[aria-expanded="true"] .navbar-toggler-animation span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .navbar-toggler[aria-expanded="true"] .navbar-toggler-animation span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-toggler[aria-expanded="true"] .navbar-toggler-animation span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .nav-link {
+    font-weight: 500;
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+  }
+
+  .nav-link:hover {
+    transform: translateY(-2px);
+  }
+
+  .nav-link:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: white;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link:hover:after {
+    width: 60%;
+    left: 20%;
+  }
+
+  .dropdown-item {
+    transition: all 0.3s ease;
+    margin: 0.2rem 0;
+  }
+
+  .dropdown-item:hover {
+    transform: translateX(5px);
+    background: rgba(255,255,255,0.15) !important;
+  }
+
+  .btn-developer {
+    transition: all 0.3s ease;
+    padding: 0.5rem 1.2rem;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+  }
+
+  .btn-developer:hover {
+    background: rgba(255,255,255,0.2) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  @media (max-width: 991.98px) {
+    .navbar-brand {
+      margin-right: auto;
+    }
+
+    .nav-link {
+      padding: 0.75rem 1rem;
+    }
+
+    .btn-group {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-developer {
+      margin-top: 1rem;
+      justify-content: center;
+      width: 100%;
+    }
+  }
+</style>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
