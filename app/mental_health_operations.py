@@ -3,6 +3,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from mental_health_models import *
 
+
 class MentalHealthOperations:
 
     @staticmethod
@@ -90,11 +91,22 @@ class MentalHealthOperations:
         if not hasattr(MentalHealth, field):
             return []
 
-        # Obtener el atributo del modelo
         model_field = getattr(MentalHealth, field)
 
-        # Realizar la búsqueda
-        result = await session.execute(
-            select(MentalHealth).where(model_field.ilike(f"%{value}%"))
-        )
-        return result.scalars().all()
+        # Determinar el tipo de campo y ajustar la búsqueda
+        try:
+            if field in ['age', 'bothered_by_worries', 'difficulty_concentrating',
+                         'comparison_feelings', 'feel_depressed', 'fluctuation_interest', 'sleep_issues']:
+                # Campos numéricos
+                numeric_value = int(value)
+                result = await session.execute(
+                    select(MentalHealth).where(model_field == numeric_value)
+                )
+            else:
+                # Campos de texto
+                result = await session.execute(
+                    select(MentalHealth).where(model_field.ilike(f"%{value}%"))
+                )
+            return result.scalars().all()
+        except ValueError:
+            return []

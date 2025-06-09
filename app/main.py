@@ -22,10 +22,12 @@ app = FastAPI(
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "..", "templates"))
 
+
 # Página de inicio
 @app.get("/", response_class=HTMLResponse, tags=["Página Principal"])
 async def root(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
+
 
 # --------------- ELIMINADOS -----------
 @app.get("/mental_health/deleted", response_model=List[DeletedMentalHealth], tags=["Eliminados"])
@@ -54,10 +56,12 @@ async def view_deleted(request: Request, session: AsyncSession = Depends(get_ses
         }
     )
 
+
 @app.get("/delete", response_class=HTMLResponse, tags=["Eliminación"])
 async def delete_page(request: Request):
     """Página para eliminar registros"""
     return templates.TemplateResponse("delete.html", {"request": request})
+
 
 # -------------------- MENTAL HEALTH --------------------
 
@@ -73,6 +77,7 @@ async def get_mental_health(request: Request, session: AsyncSession = Depends(ge
         }
     )
 
+
 @app.get("/mental_health/search_mental_health_by_age", response_model=List[MentalHealthResponse], tags=["Salud Mental"])
 async def search_by_age(age: int, session: AsyncSession = Depends(get_session)):
     results = await MentalHealthOperations.search_mental_health_by_age(session, age)
@@ -80,11 +85,13 @@ async def search_by_age(age: int, session: AsyncSession = Depends(get_session)):
         raise HTTPException(status_code=404, detail="No se encontraron registros con ese edad")
     return results
 
-@app.get("/mental_health/search_mental_health_by_field", response_model=List[MentalHealthResponse], tags=["Salud Mental"])
+
+@app.get("/mental_health/search_mental_health_by_field", response_model=List[MentalHealthResponse],
+         tags=["Salud Mental"])
 async def search_cosmetic_by_field(
-    field: str,
-    value: str,
-    session: AsyncSession = Depends(get_session)
+        field: str,
+        value: str,
+        session: AsyncSession = Depends(get_session)
 ):
     """
     Busca registros de salud mental por cualquier campo especificado.
@@ -98,9 +105,11 @@ async def search_cosmetic_by_field(
         )
     return results
 
+
 @app.get("/mental_health/by_sleep_issues", response_model=List[MentalHealthResponse], tags=["Salud Mental"])
 async def filter_mental_health_by_sleep_issues(session: AsyncSession = Depends(get_session)):
     return await MentalHealthOperations.filter_mental_health_by_sleep_issues(session)
+
 
 @app.get("/mental_health/{mental_health_id}", response_model=MentalHealthResponse, tags=["Salud Mental"])
 async def get_mental_health(mental_health_id: int, session: AsyncSession = Depends(get_session)):
@@ -108,6 +117,7 @@ async def get_mental_health(mental_health_id: int, session: AsyncSession = Depen
     if not mental_health:
         raise HTTPException(status_code=404, detail="Registro de salud mental no encontrado")
     return mental_health
+
 
 @app.post("/mental_health", response_model=MentalHealthResponse, tags=["Salud Mental"])
 async def create_mental_health_endpoint(mental_health: MentalHealth, session: AsyncSession = Depends(get_session)):
@@ -163,18 +173,18 @@ async def update_mental_health_endpoint(
 
 @app.post("/mental_health/upload", tags=["Salud Mental"])
 async def create_mental_health_with_image(
-    date: str = Form(...),
-    age: int = Form(...),
-    gender: str = Form(...),
-    relationship_status: str = Form(...),
-    bothered_by_worries: int = Form(...),
-    difficulty_concentrating: int = Form(...),
-    comparison_feelings: int = Form(...),
-    feel_depressed: int = Form(...),
-    fluctuation_interest: int = Form(...),
-    sleep_issues: int = Form(...),
-    image_file: UploadFile = Form(...),
-    session: AsyncSession = Depends(get_session)
+        date: str = Form(...),
+        age: int = Form(...),
+        gender: str = Form(...),
+        relationship_status: str = Form(...),
+        bothered_by_worries: int = Form(...),
+        difficulty_concentrating: int = Form(...),
+        comparison_feelings: int = Form(...),
+        feel_depressed: int = Form(...),
+        fluctuation_interest: int = Form(...),
+        sleep_issues: int = Form(...),
+        image_file: UploadFile = Form(...),
+        session: AsyncSession = Depends(get_session)
 ):
     image_url = await save_file(image_file)
 
@@ -202,11 +212,12 @@ async def create_mental_health_with_image(
 
     return {"id": new_entry.id}
 
+
 @app.post("/mental_health/delete", tags=["Salud Mental"])
 async def delete_mental_health_by_id(
-    request: Request,
-    id: int = Form(...),
-    session: AsyncSession = Depends(get_session)
+        request: Request,
+        id: int = Form(...),
+        session: AsyncSession = Depends(get_session)
 ):
     deleted = await MentalHealthOperations.delete_mental_health(session, id)
     if not deleted:
@@ -231,6 +242,7 @@ async def get_social_media(request: Request, session: AsyncSession = Depends(get
         }
     )
 
+
 @app.get("/social_media/search_by_gender", response_model=List[SocialMediaResponse], tags=["Redes Sociales"])
 async def search_by_gender(gender: str, session: AsyncSession = Depends(get_session)):
     results = await SocialMediaOperations.search_social_media_by_gender(session, gender)
@@ -238,27 +250,32 @@ async def search_by_gender(gender: str, session: AsyncSession = Depends(get_sess
         raise HTTPException(status_code=404, detail="No se encontraron registros de redes sociales con ese género")
     return results
 
+
 @app.get("/social_media/search_by_field", response_model=List[SocialMediaResponse], tags=["Redes Sociales"])
 async def search_social_media_by_field(
-    field: str,
-    value: str,
-    session: AsyncSession = Depends(get_session)
+        field: str,
+        value: str,
+        session: AsyncSession = Depends(get_session)
 ):
-    """
-    Busca registros de redes sociales por cualquier campo especificado.
-    Campos disponibles: id,date,age,gender,occupation_status,organization_affiliation,uses_social_media,platforms_used,daily_use_average,usage_without_purpose,distraction_when_busy,restless_without_social_media,easily_distracted,compare_with_successful_people,seek_validation,image_url
-    """
-    results = await SocialMediaOperations.search_social_media_by_field(session, field, value)
-    if not results:
+    try:
+        results = await SocialMediaOperations.search_social_media_by_field(session, field, value)
+        if not results:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No se encontraron registros con {field}={value}"
+            )
+        return results
+    except Exception as e:
         raise HTTPException(
-            status_code=404,
-            detail=f"No se encontraron registros de redes sociales con {field} que contenga '{value}'"
+            status_code=500,
+            detail=f"Error al buscar registros: {str(e)}"
         )
-    return results
+
 
 @app.get("/social_media/by_age", response_model=List[SocialMediaResponse], tags=["Redes Sociales"])
 async def filter_social_media_by_age(session: AsyncSession = Depends(get_session)):
     return await SocialMediaOperations.filter_social_media_by_age(session)
+
 
 @app.get("/social_media/{social_media_id}", response_model=SocialMediaResponse, tags=["Redes Sociales"])
 async def get_social_media(social_media_id: int, session: AsyncSession = Depends(get_session)):
@@ -267,9 +284,11 @@ async def get_social_media(social_media_id: int, session: AsyncSession = Depends
         raise HTTPException(status_code=404, detail="Registro de redes sociales no encontrado")
     return social_media
 
+
 @app.post("/social_media", response_model=SocialMediaResponse, tags=["Redes Sociales"])
 async def create_social_media_endpoint(social_media: SocialMediaCreate, session: AsyncSession = Depends(get_session)):
     return await SocialMediaOperations.create_social_media(session, social_media.model_dump())
+
 
 @app.put("/social_media/{social_media_id}", response_model=SocialMediaResponse, tags=["Redes Sociales"])
 async def update_social_media_endpoint(
@@ -330,22 +349,22 @@ async def update_social_media_endpoint(
 
 @app.post("/social_media/upload", tags=["Redes Sociales"])
 async def create_social_media_with_image(
-    date: str = Form(...),
-    age: int = Form(...),
-    gender: str = Form(...),
-    occupation_status: str = Form(...),
-    organization_affiliation: str = Form(...),
-    uses_social_media: str = Form(...),
-    platforms_used:  List[str] = Form(...),
-    daily_use_average: str = Form(...),
-    usage_without_purpose: int = Form(...),
-    distraction_when_busy: int = Form(...),
-    restless_without_social_media: int = Form(...),
-    easily_distracted: int = Form(...),
-    compare_with_successful_people: int = Form(...),
-    seek_validation: int = Form(...),
-    image_file: UploadFile = Form(...),
-    session: AsyncSession = Depends(get_session)
+        date: str = Form(...),
+        age: int = Form(...),
+        gender: str = Form(...),
+        occupation_status: str = Form(...),
+        organization_affiliation: str = Form(...),
+        uses_social_media: str = Form(...),
+        platforms_used: List[str] = Form(...),
+        daily_use_average: str = Form(...),
+        usage_without_purpose: int = Form(...),
+        distraction_when_busy: int = Form(...),
+        restless_without_social_media: int = Form(...),
+        easily_distracted: int = Form(...),
+        compare_with_successful_people: int = Form(...),
+        seek_validation: int = Form(...),
+        image_file: UploadFile = Form(...),
+        session: AsyncSession = Depends(get_session)
 ):
     platforms_str = ", ".join(platforms_used)
     image_url = await save_file(image_file)
@@ -380,9 +399,9 @@ async def create_social_media_with_image(
 
 @app.post("/social_media/delete", tags=["Redes Sociales"])
 async def delete_social_media_by_id(
-    request: Request,
-    id: int = Form(...),
-    session: AsyncSession = Depends(get_session)
+        request: Request,
+        id: int = Form(...),
+        session: AsyncSession = Depends(get_session)
 ):
     deleted = await SocialMediaOperations.delete_social_media(session, id)
     if not deleted:
@@ -391,6 +410,7 @@ async def delete_social_media_by_id(
             detail="El registro de redes sociales no fue encontrado"
         )
     return {"message": "Registro de redes sociales eliminado con éxito"}
+
 
 # -------------- MOSTRAR REGISTROS ----------------
 @app.get("/show", response_class=HTMLResponse, tags=["Registros"])
@@ -410,38 +430,84 @@ async def show_records(
         }
     )
 
+
 # -------------------- CREACIÓN --------------------
 @app.get("/create", response_class=HTMLResponse, tags=["Creación"])
 async def create_page(request: Request):
     """Página para crear nuevos registros"""
     return templates.TemplateResponse("create.html", {"request": request})
 
+
 # --------------- ACTUALIZACIÓN -----------
 @app.get("/update", response_class=HTMLResponse, tags=["Actualización"])
 async def update_page(request: Request):
     return templates.TemplateResponse("update.html", {"request": request})
 
+
 # --------------- CONSULTAS -----------
 @app.get("/query", response_class=HTMLResponse, tags=["Consultas"])
-async def query_page(request: Request):
-    return templates.TemplateResponse("query.html", {"request": request})
+async def query_page(
+        request: Request,
+        type: str = None,
+        field: str = None,
+        value: str = None,
+        id: int = None,
+        session: AsyncSession = Depends(get_session)
+):
+    results = []
+    error = None
+
+    try:
+        if id:
+            if type == "mental_health":
+                result = await MentalHealthOperations.get_mental_health_by_id(session, id)
+                if result:
+                    results = [result]
+            else:
+                result = await SocialMediaOperations.get_social_media_by_id(session, id)
+                if result:
+                    results = [result]
+        elif type and field and value:
+            if type == "mental_health":
+                results = await MentalHealthOperations.search_mental_health_by_field(session, field, value)
+            else:
+                results = await SocialMediaOperations.search_social_media_by_field(session, field, value)
+
+        if not results:
+            error = "No se encontraron resultados para la búsqueda"
+
+    except Exception as e:
+        error = f"Error en la búsqueda: {str(e)}"
+
+    return templates.TemplateResponse(
+        "query.html",
+        {
+            "request": request,
+            "results": results,
+            "error": error
+        }
+    )
+
 
 # --------------- DESARROLLADOR -----------
 @app.get("/developer", response_class=HTMLResponse, tags=["Desarrollador"])
 async def developer_info(request: Request):
     return templates.TemplateResponse("developer.html", {"request": request})
 
+
 # --------------- PROYECTO ----------------
 @app.get("/goal", response_class=HTMLResponse, tags=["Objetivo Proyecto"])
 async def objetivo_proyecto(request: Request):
     return templates.TemplateResponse("goal.html", {"request": request})
 
+
 # --------------- PLANEACIÓN ----------------
 @app.get("/planning", response_class=HTMLResponse, tags=["Planeación"])
 async def planeacion_proyecto(request: Request):
-    return templates.TemplateResponse("planning.html", {"request":request})
+    return templates.TemplateResponse("planning.html", {"request": request})
+
 
 # --------------- DISEÑO ----------------
 @app.get("/design", response_class=HTMLResponse, tags=["Diseño"])
 async def diseno_proyecto(request: Request):
-    return templates.TemplateResponse("design.html", {"request":request})
+    return templates.TemplateResponse("design.html", {"request": request})

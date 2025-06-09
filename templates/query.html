@@ -1,0 +1,487 @@
+{% extends "base.html" %}
+
+{% block title %}Consultas - Salud Mental y Redes Sociales{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background-color: #f8f9fa;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0 rounded-lg" style="background: linear-gradient(145deg, #f0f8ff 0%, #e6f7ff 100%);">
+                <!-- Encabezado -->
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #1a3a8f 0%, #0c6e4e 100%);">
+                    <h1 class="mb-0 text-white" style="font-family: 'Arial', sans-serif; font-weight: 700; font-size: 2.5rem;">
+                        <i class="fas fa-search me-2"></i>
+                        Consultas y Búsquedas
+                    </h1>
+                    <p class="text-white mb-0 mt-2">
+                        Busca registros de salud mental y redes sociales
+                    </p>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Búsqueda por ID -->
+                    <div class="card mb-4 border-0 shadow-sm" style="background-color: #e6f0ff;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #4fc3f7 0%, #81c784 100%);">
+                            <h2 class="h5 mb-0 text-white">
+                                <i class="fas fa-id-card me-2"></i>Buscar por ID
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="idForm" class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="type" class="form-label">Tipo de Registro</label>
+                                    <select id="type" name="type" class="form-select" required>
+                                        <option value="mental_health">Salud Mental</option>
+                                        <option value="social_media">Redes Sociales</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id" class="form-label">ID del Registro</label>
+                                    <input type="number" id="id" name="id" class="form-control" required min="1">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-blue mt-4 w-100">
+                                        <i class="fas fa-search me-1"></i>Buscar
+                                    </button>
+                                </div>
+                            </form>
+                            <div id="idResults" class="mt-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Búsqueda por campo -->
+                    <div class="card mb-4 border-0 shadow-sm" style="background-color: #e6f0ff;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #4fc3f7 0%, #81c784 100%);">
+                            <h2 class="h5 mb-0 text-white">
+                                <i class="fas fa-filter me-2"></i>Buscar por Campo
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="fieldForm" class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="fieldType" class="form-label">Tipo de Registro</label>
+                                    <select id="fieldType" name="type" class="form-select" required>
+                                        <option value="mental_health">Salud Mental</option>
+                                        <option value="social_media">Redes Sociales</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="fieldName" class="form-label">Campo</label>
+                                    <select id="fieldName" name="field" class="form-select" required>
+                                        <!-- Se llena dinámicamente con JavaScript -->
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="fieldValue" class="form-label">Valor</label>
+                                    <input type="text" id="fieldValue" name="value" class="form-control" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-blue mt-4 w-100">
+                                        <i class="fas fa-search me-1"></i>Buscar
+                                    </button>
+                                </div>
+                            </form>
+                            <div id="fieldResults" class="mt-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Búsquedas Específicas Salud Mental -->
+                    <div class="card mb-4 border-0 shadow-sm" style="background-color: #e6f0ff;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #4fc3f7 0%, #81c784 100%);">
+                            <h2 class="h5 mb-0 text-white">
+                                <i class="fas fa-brain me-2"></i>Consultas de Salud Mental
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <form id="ageForm" class="mb-3">
+                                        <label for="age" class="form-label">Buscar por Edad</label>
+                                        <div class="input-group">
+                                            <input type="number" id="age" name="age" class="form-control" required min="10" max="100">
+                                            <button type="submit" class="btn btn-blue">
+                                                <i class="fas fa-search me-1"></i>Buscar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <button id="sleepIssuesBtn" class="btn btn-blue w-100 h-100">
+                                        <i class="fas fa-bed me-1"></i>Filtrar por Problemas de Sueño
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="mentalHealthResults" class="mt-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Búsquedas Específicas Redes Sociales -->
+                    <div class="card mb-4 border-0 shadow-sm" style="background-color: #e6f0ff;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #4fc3f7 0%, #81c784 100%);">
+                            <h2 class="h5 mb-0 text-white">
+                                <i class="fas fa-share-alt me-2"></i>Consultas de Redes Sociales
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <form id="genderForm" class="mb-3">
+                                        <label for="gender" class="form-label">Buscar por Género</label>
+                                        <div class="input-group">
+                                            <select id="gender" name="gender" class="form-select" required>
+                                                <option value="">Selecciona un género</option>
+                                                <option value="Masculino">Masculino</option>
+                                                <option value="Femenino">Femenino</option>
+                                                <option value="No binario">No binario</option>
+                                                <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-blue">
+                                                <i class="fas fa-search me-1"></i>Buscar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <button id="ageFilterBtn" class="btn btn-blue w-100 h-100">
+                                        <i class="fas fa-sort-numeric-down me-1"></i>Ordenar por Edad
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="socialMediaResults" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --blue: #1a3a8f;
+        --green: #0c6e4e;
+        --light-blue: #4fc3f7;
+        --light-green: #81c784;
+    }
+
+    .btn-blue {
+        background: var(--blue);
+        color: white;
+        border: none;
+        transition: all 0.3s;
+    }
+
+    .btn-blue:hover {
+        background: #122a6f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 58, 143, 0.3);
+        color: white;
+    }
+
+    .form-label {
+        color: var(--blue);
+        font-weight: 600;
+    }
+
+    .result-card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .result-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .progress {
+        height: 20px;
+        border-radius: 10px;
+    }
+
+    .img-preview {
+        max-width: 200px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+
+<script>
+    // Definición de campos por tipo de registro
+    const fieldDefinitions = {
+        mental_health: {
+            date: 'Fecha',
+            age: 'Edad',
+            gender: 'Género',
+            relationship_status: 'Estado Civil',
+            bothered_by_worries: 'Nivel de Preocupación',
+            difficulty_concentrating: 'Dificultad de Concentración',
+            comparison_feelings: 'Sentimientos de Comparación',
+            feel_depressed: 'Sentimientos de Depresión',
+            fluctuation_interest: 'Fluctuación de Interés',
+            sleep_issues: 'Problemas de Sueño'
+        },
+        social_media: {
+            date: 'Fecha',
+            age: 'Edad',
+            gender: 'Género',
+            occupation_status: 'Estado Ocupacional',
+            organization_affiliation: 'Afiliación Organizacional',
+            uses_social_media: 'Usa Redes Sociales',
+            platforms_used: 'Plataformas Utilizadas',
+            daily_use_average: 'Uso Diario Promedio',
+            usage_without_purpose: 'Uso sin Propósito',
+            distraction_when_busy: 'Distracción',
+            restless_without_social_media: 'Inquietud sin Redes',
+            easily_distracted: 'Fácilmente Distraído',
+            compare_with_successful_people: 'Comparación con Exitosos',
+            seek_validation: 'Busca Validación'
+        }
+    };
+
+    // Función para actualizar los campos de búsqueda
+    function updateFieldOptions() {
+        const type = document.getElementById('fieldType').value;
+        const fieldSelect = document.getElementById('fieldName');
+        fieldSelect.innerHTML = '';
+
+        Object.entries(fieldDefinitions[type]).forEach(([value, label]) => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            fieldSelect.appendChild(option);
+        });
+    }
+
+    // Función para mostrar resultados
+    function displayResults(results, containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+
+        if (!results || results.length === 0) {
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No se encontraron resultados
+                </div>`;
+            return;
+        }
+
+        results.forEach(result => {
+            const card = document.createElement('div');
+            card.className = 'result-card';
+
+            // Contenido común
+            let content = `
+                <div class="row">
+                    <div class="col-md-3">
+                        <img src="${result.image_url}" class="img-preview mb-3" alt="Imagen">
+                    </div>
+                    <div class="col-md-9">
+                        <h5 class="text-primary mb-3">ID: ${result.id}</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Fecha:</strong> ${result.date}</p>
+                                <p><strong>Edad:</strong> ${result.age}</p>
+                                <p><strong>Género:</strong> ${result.gender}</p>
+                            </div>`;
+
+            // Contenido específico por tipo
+            if (result.hasOwnProperty('sleep_issues')) {
+                // Salud Mental
+                content += `
+                    <div class="col-md-8">
+                        <div class="mb-2">
+                            <small class="text-muted">Nivel de preocupación:</small>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: ${result.bothered_by_worries * 20}%">
+                                    ${result.bothered_by_worries}/5
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Problemas de sueño:</small>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" style="width: ${result.sleep_issues * 20}%">
+                                    ${result.sleep_issues}/5
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            } else {
+                // Redes Sociales
+                content += `
+                    <div class="col-md-8">
+                        <p><strong>Plataformas:</strong> ${result.platforms_used}</p>
+                        <div class="mb-2">
+                            <small class="text-muted">Uso sin propósito:</small>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: ${result.usage_without_purpose * 20}%">
+                                    ${result.usage_without_purpose}/5
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Nivel de distracción:</small>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" style="width: ${result.easily_distracted * 20}%">
+                                    ${result.easily_distracted}/5
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+
+            content += `
+                        </div>
+                    </div>
+                </div>`;
+
+            card.innerHTML = content;
+            container.appendChild(card);
+        });
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar campos de búsqueda
+        updateFieldOptions();
+        document.getElementById('fieldType').addEventListener('change', updateFieldOptions);
+
+        // Búsqueda por ID
+        document.getElementById('idForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const type = document.getElementById('type').value;
+            const id = document.getElementById('id').value;
+            const resultsContainer = document.getElementById('idResults');
+            try {
+                const response = await fetch(`/${type}/${id}`);
+                if (!response.ok) {
+                    throw new Error(`No se encontró ningún registro con el ID ${id}`);
+                }
+                const data = await response.json();
+                displayResults([data], 'idResults');
+            } catch (error) {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${error.message}
+                    </div>`;
+            }
+        });
+
+        // Búsqueda por campo
+        document.getElementById('fieldForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const type = document.getElementById('fieldType').value;
+            const field = document.getElementById('fieldName').value;
+            const value = document.getElementById('fieldValue').value;
+            const resultsContainer = document.getElementById('fieldResults');
+            
+            if (!value.trim()) {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Por favor, ingrese un valor para buscar
+                    </div>`;
+                return;
+            }
+
+            try {
+                let endpoint = type === 'mental_health' ? 
+                    '/mental_health/search_mental_health_by_field' : 
+                    '/social_media/search_by_field';
+                    
+                const response = await fetch(`${endpoint}?field=${field}&value=${value}`);
+                
+                if (!response.ok) {
+                    throw new Error(`No se encontraron registros con ${field} = ${value}`);
+                }
+                
+                const data = await response.json();
+                if (!data || data.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No se encontraron registros que coincidan con la búsqueda
+                        </div>`;
+                    return;
+                }
+                displayResults(data, 'fieldResults');
+            } catch (error) {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${error.message}
+                    </div>`;
+            }
+        });
+
+        // Búsqueda por edad (Salud Mental)
+        document.getElementById('ageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const age = document.getElementById('age').value;
+            const resultsContainer = document.getElementById('mentalHealthResults');
+            try {
+                const response = await fetch(`/mental_health/search_mental_health_by_age?age=${age}`);
+                if (!response.ok) {
+                    throw new Error(`No se encontraron registros para la edad ${age}`);
+                }
+                const data = await response.json();
+                displayResults(data, 'mentalHealthResults');
+            } catch (error) {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${error.message}
+                    </div>`;
+            }
+        });
+
+        // Filtrar por problemas de sueño
+        document.getElementById('sleepIssuesBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/mental_health/by_sleep_issues');
+                const data = await response.json();
+                displayResults(data, 'mentalHealthResults');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Búsqueda por género (Redes Sociales)
+        document.getElementById('genderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const gender = document.getElementById('gender').value;
+            const resultsContainer = document.getElementById('socialMediaResults');
+            try {
+                const response = await fetch(`/social_media/search_by_gender?gender=${gender}`);
+                if (!response.ok) {
+                    throw new Error(`No se encontraron registros para el género seleccionado`);
+                }
+                const data = await response.json();
+                displayResults(data, 'socialMediaResults');
+            } catch (error) {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${error.message}
+                    </div>`;
+            }
+        });
+
+        // Filtrar por edad (Redes Sociales)
+        document.getElementById('ageFilterBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/social_media/by_age');
+                const data = await response.json();
+                displayResults(data, 'socialMediaResults');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+{% endblock %}

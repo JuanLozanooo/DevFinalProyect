@@ -3,6 +3,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from social_media_models import *
 
+
 class SocialMediaOperations:
 
     @staticmethod
@@ -87,15 +88,30 @@ class SocialMediaOperations:
     @staticmethod
     async def search_social_media_by_field(session: AsyncSession, field: str, value: str) -> List[SocialMedia]:
         """Busca registros por cualquier campo especificado"""
-        if not hasattr(SocialMedia, field):
-            return []
+        try:
+            if not hasattr(SocialMedia, field):
+                raise ValueError(f"Campo no válido: {field}")
 
-        # Obtener el atributo del modelo
-        model_field = getattr(SocialMedia, field)
+            model_field = getattr(SocialMedia, field)
 
-        # Realizar la búsqueda
-        result = await session.execute(
-            select(SocialMedia).where(model_field.ilike(f"%{value}%"))
-        )
-        return result.scalars().all()
+            # Determinar el tipo de campo y ajustar la búsqueda
+            if field in ['age', 'usage_without_purpose', 'distraction_when_busy',
+                         'restless_without_social_media', 'easily_distracted',
+                         'compare_with_successful_people', 'seek_validation']:
+                # Campos numéricos
+                numeric_value = int(value)
+                result = await session.execute(
+                    select(SocialMedia).where(model_field == numeric_value)
+                )
+            else:
+                # Campos de texto
+                result = await session.execute(
+                    select(SocialMedia).where(model_field.ilike(f"%{value}%"))
+                )
+
+            return result.scalars().all()
+        except ValueError as e:
+            raise ValueError(f"Error de validación: {str(e)}")
+        except Exception as e:
+            raise Exception(f"Error en la búsqueda: {str(e)}")
 
