@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio | Impacto de las Redes Sociales en la Salud Mental{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Sección Hero -->
+    <div class="hero-section text-center mb-5">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span>MENTAL</span> <span>HEALTH</span>
+                <div style="font-family: 'Arial', sans-serif; font-weight: 600; font-size: 0.9rem; color: #e0e0e0; margin-top: 0.2rem; letter-spacing: 0.5px;">
+                    SOCIAL MEDIA ANALYTICS
+                </div>
+            </h1>
+            <p class="hero-subtitle">
+                Analizando la relación entre el uso de redes sociales y los indicadores de salud mental, identificando patrones de dependencia o adicción a las plataformas digitales y su impacto en el bienestar emocional.
+            </p>
+            <div class="mt-4">
+                <a href="#features" class="btn btn-light btn-lg me-2">
+                    <i class="fas fa-search me-2"></i>Explorar
+                </a>
+                <a href="/create" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-plus me-2"></i>Crear Registro
+                </a>
+                <a href="/update" class="btn btn-outline-light btn-lg">
+                    <i class="far fa-pen-to-square me-2"></i>Editar Registro
+                </a>
+                <a href="/delete" class="btn btn-outline-light btn-lg">
+                    <i class="far fa-trash-can me-2"></i>Borrar Registro
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Funcionalidades -->
+    <div id="features" class="my-5 pt-4">
+        <h2 class="text-center mb-4" style="color: #1a3a8f; font-weight: 700;">
+            <i class="fas fa-cogs me-2"></i>Explora Nuestras Funcionalidades
+        </h2>
+
+        <div class="row g-4">
+            {% for page in [
+                ('create', 'far fa-square-plus', 'Crear Registros', 'Agrega nuevos registros de salud mental o redes sociales'),
+                ('update', 'far fa-pen-to-square me-2', 'Actualizar Datos', 'Modifica información existente en nuestros registros'),
+                ('delete', 'far fa-trash-can me-2', 'Eliminar Registros', 'Gestiona la eliminación de datos del sistema'),
+                ('query', 'fas fa-search', 'Consultar Información', 'Busca y filtra registros según tus necesidades'),
+                ('goal', 'fas fa-award', 'Objetivos', 'Conoce los propósitos de nuestra investigación'),
+                ('deleted', 'fas fa-recycle', 'Registros Eliminados', 'Revisa los datos que han sido eliminados'),
+                ('show', 'fas fa-table-list', 'Todos los Registros', 'Visualiza la información completa almacenada'),
+                ('design', 'fas fa-compass-drafting', 'Diseño', 'Explora nuestra metodología de diseño'),
+                ('planning', 'fas fa-route', 'Planificación', 'Conoce nuestro proceso de desarrollo')
+            ] %}
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="{{ page[1] }}"></i>
+                    </div>
+                    <h3 class="feature-title">{{ page[2] }}</h3>
+                    <p>{{ page[3] }}</p>
+                    <a href="/{{ page[0] }}" class="feature-link">
+                        Vamos! <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Carrusel de Gráficas Mejorado -->
+    <div class="my-5">
+        <h2 class="text-center mb-4" style="color: #1a3a8f; font-weight: 700;">
+            <i class="fas fa-chart-line me-2"></i>Análisis Visual
+        </h2>
+        <div class="graph-carousel">
+            <div id="graphCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#graphCarousel" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#graphCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#graphCarousel" data-bs-slide-to="2"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes/correlation_matrix.png"
+                             alt="Matriz de Correlación">
+                        <div class="graph-title">Matriz de Correlación</div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes/bar_relationship.png"
+                             alt="Relación por Género">
+                        <div class="graph-title">Relación por Género</div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes/age_histogram.png"
+                             alt="Distribución por Edad">
+                        <div class="graph-title">Distribución por Edad</div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#graphCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#graphCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        </div>
+        <p class="text-center text-muted mt-4">
+            <i class="fas fa-info-circle me-2"></i>Desliza para ver diferentes visualizaciones de datos
+        </p>
+    </div>
+
+    <!-- Nueva Sección de Testimonios -->
+    <div class="my-5 py-4">
+        <h2 class="text-center mb-4" style="color: #1a3a8f; font-weight: 700;">
+            <i class="fas fa-quote-left me-2"></i>Lo que dicen nuestros usuarios
+        </h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Que locura ¿Eso se puede hacer?"</p>
+                    <p class="testimonial-author">- Compañero de la universidad</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Hay que pagarle un curso de informática."</p>
+                    <p class="testimonial-author">- Mi abuela</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"ayyyyy como hiciste eso? :("</p>
+                    <p class="testimonial-author">- La chica que me gusta</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Explicativo -->
+    <div class="text-center my-5">
+        <h2 class="mb-4" style="color: #1a3a8f; font-weight: 700;">
+            <i class="fas fa-play-circle me-2"></i>¿Cuál es el impacto de las redes sociales en la salud mental?
+        </h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/x_d3DiPSL2c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Sección de Llamada a la Acción -->
+    <div class="text-center mt-5 pt-4">
+        <h3 class="mb-4" style="color: #1a3a8f;">¿Listo para comenzar?</h3>
+        <a href="/create" class="btn btn-lg" style="background: linear-gradient(135deg, #1a3a8f 0%, #0c6e4e 100%); color: white;">
+            <i class="fas fa-rocket me-2"></i>¡Crear mi primer registro!
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Estilos principales */
+    .hero-section {
+        background: linear-gradient(135deg, rgba(26, 58, 143, 0.9) 0%, rgba(12, 110, 78, 0.9) 100%),
+                    url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 5rem 0;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-family: 'Arial', sans-serif;
+        font-weight: 800;
+        font-size: 3.5rem;
+        line-height: 1.2;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-title span:nth-child(1) {
+        color: #4fc3f7;
+    }
+
+    .hero-title span:nth-child(2) {
+        color: #81c784;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: rgba(255,255,255,0.9);
+        margin: 1.5rem auto 0;
+        max-width: 700px;
+        text-align: center;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 2rem;
+        height: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border: 1px solid rgba(79, 195, 247, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, #4fc3f7, #81c784);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(79, 195, 247, 0.2);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #1a3a8f, #0c6e4e);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .feature-title {
+        font-weight: 700;
+        color: #1a3a8f;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-link {
+        display: inline-block;
+        margin-top: 1rem;
+        color: #0c6e4e;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .feature-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #0c6e4e;
+        transition: width 0.3s ease;
+    }
+
+    .feature-link:hover {
+        color: #1a3a8f;
+    }
+
+    .feature-link:hover::after {
+        width: 100%;
+    }
+
+    /* Video más pequeño */
+    .video-container {
+        position: relative;
+        padding-bottom: 40%; /* Más pequeño que antes */
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px;
+        margin: 2rem auto;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        max-width: 700px; /* Limita el ancho máximo */
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+        /* Carrusel mejorado */
+    .graph-carousel {
+        max-width: 750px; /* Más compacto que antes */
+        margin: 2rem auto;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(26, 58, 143, 0.15);
+        border: 1px solid rgba(79, 195, 247, 0.3);
+        background: linear-gradient(145deg, #f0f8ff 0%, #e6f7ff 100%);
+    }
+
+    .carousel-item {
+        padding: 1.5rem;
+        background-color: transparent !important;
+    }
+
+    .carousel-item img {
+        width: 100%;
+        height: auto;
+        max-height: 400px; /* Altura controlada */
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        background-color: white;
+        padding: 0.5rem;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 6%;
+        opacity: 0.9;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(26, 58, 143, 0.8);
+        border-radius: 50%;
+        padding: 1.2rem;
+        background-size: 60%;
+        transition: all 0.3s ease;
+    }
+
+    .carousel-control-prev-icon:hover,
+    .carousel-control-next-icon:hover {
+        background-color: #1a3a8f;
+        transform: scale(1.1);
+    }
+
+    .carousel-indicators {
+        bottom: -40px;
+    }
+
+    .carousel-indicators button {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #4fc3f7;
+        border: 2px solid white;
+        margin: 0 6px;
+        transition: all 0.3s ease;
+    }
+
+    .carousel-indicators button.active {
+        background-color: #1a3a8f;
+        transform: scale(1.2);
+    }
+
+    .graph-title {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(26, 58, 143, 0.85);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Animaciones */
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .floating {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+        }
+
+        .video-container {
+            padding-bottom: 56.25%; /* Relación 16:9 en móviles */
+        }
+    }
+</style>
+
+<!-- Script para animaciones -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Efecto de aparición gradual para las tarjetas
+    const featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 100 * index);
+
+        // Estilos iniciales para la animación
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    });
+
+    // Efecto hover mejorado para los enlaces
+    const featureLinks = document.querySelectorAll('.feature-link');
+    featureLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            link.querySelector('i').style.transform = 'translateX(5px)';
+        });
+        link.addEventListener('mouseleave', () => {
+            link.querySelector('i').style.transform = 'translateX(0)';
+        });
+    });
+
+    // Inicializar carrusel con intervalo automático
+    const myCarousel = new bootstrap.Carousel(document.getElementById('graphCarousel'), {
+        interval: 3000, // Cambia cada 3 segundos
+        ride: 'carousel'
+    });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ... (otros scripts se mantienen igual) ...
+
+    // Mejoras para el carrusel
+    const carousel = document.getElementById('graphCarousel');
+
+    // Pausar al hacer hover
+    carousel.addEventListener('mouseenter', () => {
+        const bsCarousel = bootstrap.Carousel.getInstance(carousel);
+        bsCarousel.pause();
+    });
+
+    // Reanudar al salir
+    carousel.addEventListener('mouseleave', () => {
+        const bsCarousel = bootstrap.Carousel.getInstance(carousel);
+        bsCarousel.cycle();
+    });
+
+    // Efecto activo para indicadores
+    const indicators = document.querySelectorAll('.carousel-indicators button');
+    indicators.forEach(indicator => {
+        indicator.addEventListener('mouseenter', () => {
+            indicator.style.transform = 'scale(1.3)';
+        });
+        indicator.addEventListener('mouseleave', () => {
+            if (!indicator.classList.contains('active')) {
+                indicator.style.transform = 'scale(1)';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

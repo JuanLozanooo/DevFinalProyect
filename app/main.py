@@ -131,7 +131,7 @@ async def update_mental_health_endpoint(
         session: AsyncSession = Depends(get_session)
 ):
     """
-    Actualiza un registro de colaboración de maquillaje.
+    Actualiza un registro de salud mental.
     Solo los campos enviados en la solicitud serán actualizados.
     """
     update_data = {}
@@ -157,7 +157,7 @@ async def update_mental_health_endpoint(
 
     updated = await MentalHealthOperations.update_mental_health(session, mental_health_id, update_data)
     if not updated:
-        raise HTTPException(status_code=404, detail="La colaboración no fue actualizada")
+        raise HTTPException(status_code=404, detail="El registro de salud mental no fue actualizado")
     return updated
 
 
