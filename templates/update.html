@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}
+    ✏️ Actualizar Registro
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background-color: var(--bg-blue);">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-lg border-0 rounded-lg" style="background: linear-gradient(145deg, #f0f8ff 0%, #e6f7ff 100%);">
+        <div class="card-header text-center py-4" style="background: linear-gradient(135deg, var(--blue) 0%, var(--green) 100%);">
+          <h1 class="mb-0 text-white" style="font-family: 'Arial', sans-serif; font-weight:700; font-size:2.5rem;">
+            ✏️ Actualizar Registro
+          </h1>
+        </div>
+        <div class="card-body p-4">
+          <!-- Tipo de registro -->
+          <div class="card mb-4 border-0 shadow-sm" style="background-color: var(--bg-blue);">
+            <div class="card-header" style="background: linear-gradient(135deg, var(--light-blue) 0%, var(--light-green) 100%);">
+              <h2 class="h5 mb-0 text-white"><i class="fas fa-tag me-2"></i>Tipo de Registro</h2>
+            </div>
+            <div class="card-body">
+              <select id="recordType" class="form-select" style="border-color: var(--light-blue);">
+                <option value="mental_health">Salud Mental</option>
+                <option value="social_media">Redes Sociales</option>
+              </select>
+            </div>
+          </div>
+          <!-- Búsqueda -->
+          <div class="card mb-4 border-0 shadow-sm" style="background-color: var(--bg-blue);">
+            <div class="card-header" style="background: linear-gradient(135deg, var(--light-blue) 0%, var(--light-green) 100%);">
+              <h2 class="h5 mb-0 text-white"><i class="fas fa-search me-2"></i>Buscar Registro</h2>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-8">
+                  <input type="number" id="recordId" class="form-control" placeholder="ID del Registro" style="border-color: var(--light-blue);">
+                </div>
+                <div class="col-md-4 text-center">
+                  <button onclick="fetchRecord()" class="btn btn-blue w-100"><i class="fas fa-search me-1"></i>Buscar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Contenedor formulario -->
+          <div id="formContainer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Definir los campos aquí en lugar de intentar reutilizarlos
+const formFields = {
+    mental_health: [
+        {name: "date", label: "Fecha", type: "text", icon: "fas fa-calendar-alt", placeholder: "YYYY-MM-DD"},
+        {name: "age", label: "Edad", type: "number", icon: "fas fa-user", min: 13, max: 80, placeholder: "Edad en años"},
+        {name: "gender", label: "Género", type: "select", icon: "fas fa-venus-mars",
+         options: ["Masculino", "Femenino", "No binario", "Prefiero no decirlo"]},
+        {name: "relationship_status", label: "Estado Civil", type: "select", icon: "fas fa-heart",
+         options: ["Soltero/a", "En una relación", "Casado/a", "Divorciado/a", "Viudo/a", "Prefiero no decirlo"]},
+        {name: "bothered_by_worries", label: "Nivel de Preocupación", type: "range", icon: "fas fa-frown",
+         min: 1, max: 5, description: "¿Qué tanto te molestan las preocupaciones?"},
+        {name: "difficulty_concentrating", label: "Dificultad para Concentrarte", type: "range", icon: "fas fa-brain",
+         min: 1, max: 5, description: "¿Qué tan difícil es mantener la concentración?"},
+        {name: "comparison_feelings", label: "Comparación con Otros", type: "range", icon: "fas fa-balance-scale",
+         min: 1, max: 5, description: "¿Con qué frecuencia te comparas con otros?"},
+        {name: "feel_depressed", label: "Sentimientos de Tristeza", type: "range", icon: "fas fa-sad-tear",
+         min: 1, max: 5, description: "¿Con qué frecuencia te sientes triste?"},
+        {name: "fluctuation_interest", label: "Cambios de Interés", type: "range", icon: "fas fa-chart-line",
+         min: 1, max: 5, description: "¿Qué tan variables son tus niveles de interés?"},
+        {name: "sleep_issues", label: "Problemas de Sueño", type: "range", icon: "fas fa-bed",
+         min: 1, max: 5, description: "¿Qué tan graves son tus problemas para dormir?"},
+        {name: "image_file", label: "Imagen de Perfil", type: "file", icon: "fas fa-image",
+         accept: "image/*", description: "Actualizar imagen (opcional)"}
+    ],
+    social_media: [
+        {name: "date", label: "Fecha", type: "text", icon: "fas fa-calendar-alt", placeholder: "YYYY-MM-DD"},
+        {name: "age", label: "Edad", type: "number", icon: "fas fa-user", min: 13, max: 80},
+        {name: "gender", label: "Género", type: "select", icon: "fas fa-venus-mars",
+         options: ["Masculino", "Femenino", "No binario", "Prefiero no decirlo"]},
+        {name: "occupation_status", label: "Ocupación", type: "select", icon: "fas fa-briefcase",
+         options: ["Estudiante escolar", "Estudiante universitario", "Empleado tiempo completo",
+                  "Empleado medio tiempo", "Trabajador independiente", "Desempleado", "Jubilado"]},
+        {name: "organization_affiliation", label: "Institución/Empresa", type: "text", icon: "fas fa-building"},
+        {name: "uses_social_media", label: "¿Usas Redes Sociales?", type: "select", icon: "fas fa-check-circle",
+         options: ["Sí", "No"]},
+        {name: "platforms_used", label: "Plataformas que Usas", type: "select", icon: "fas fa-share-alt",
+         multiple: true,
+         options: ["Facebook", "Instagram", "Twitter", "TikTok", "LinkedIn", "YouTube",
+                   "WhatsApp", "Telegram", "Snapchat", "Pinterest", "Reddit", "Discord", "Otra"]},
+        {name: "daily_use_average", label: "Tiempo Promedio de Uso Diario", type: "select", icon: "fas fa-clock",
+         options: ["Menos de 1 hora", "1-2 horas", "2-3 horas", "3-4 horas", "4-5 horas", "Más de 5 horas"]},
+        {name: "usage_without_purpose", label: "Uso Sin Propósito", type: "range", icon: "fas fa-random",
+         min: 1, max: 5, description: "Frecuencia de uso sin objetivo específico"},
+        {name: "distraction_when_busy", label: "Distracción Durante Actividades", type: "range",
+         icon: "fas fa-exclamation-triangle", min: 1, max: 5},
+        {name: "restless_without_social_media", label: "Inquietud sin Redes", type: "range",
+         icon: "fas fa-mobile-alt", min: 1, max: 5},
+        {name: "easily_distracted", label: "Facilidad de Distracción", type: "range",
+         icon: "fas fa-eye-slash", min: 1, max: 5},
+        {name: "compare_with_successful_people", label: "Comparación con Exitosos", type: "range",
+         icon: "fas fa-trophy", min: 1, max: 5},
+        {name: "seek_validation", label: "Búsqueda de Validación", type: "range",
+         icon: "fas fa-heart", min: 1, max: 5},
+        {name: "image_file", label: "Imagen de Perfil", type: "file", icon: "fas fa-image",
+         accept: "image/*", description: "Actualizar imagen (opcional)"}
+    ]
+};
+
+async function fetchRecord() {
+  const type = document.getElementById('recordType').value;
+  const id = document.getElementById('recordId').value;
+  try {
+    const res = await fetch(`/${type}/${id}`);
+    if (!res.ok) throw new Error('Registro no encontrado');
+    const record = await res.json();
+    showUpdateForm(type, record);
+  } catch(err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+function showUpdateForm(type, record) {
+  const fields = formFields[type];
+  const container = document.getElementById('formContainer');
+  let html = `
+    <div class="card border-0 shadow-sm" style="background-color: var(--bg-blue);">
+      <div class="card-header" style="background: white;">
+        <h2 class="h5 mb-0 text-dark"><i class="fas fa-edit me-2"></i>Editar Registro</h2>
+      </div>
+      <div class="card-body">
+        <form id="updateForm" class="row g-3" enctype="multipart/form-data">
+          <input type="hidden" name="id" value="${record.id}">
+  `;
+
+  fields.forEach(f => {
+    html += `<div class="col-md-6 mb-3"><label class="form-label"><i class="${f.icon} me-1"></i>${f.label}:</label>`;
+    if (f.type === 'select') {
+      if (f.multiple) {
+        f.options.forEach(opt => {
+          const checked = (record[f.name]||[]).includes(opt)? 'checked':'';
+          html += `<div class="form-check"><input class="form-check-input" type="checkbox" name="${f.name}" value="${opt}" ${checked}><label class="form-check-label">${opt}</label></div>`;
+        });
+      } else {
+        html += `<select name="${f.name}" class="form-select" style="border-color: var(--light-blue);" ${f.required?'required':''}><option value="">Seleccione</option>`;
+        f.options.forEach(opt => {
+          const sel = record[f.name] === opt ? 'selected':'';
+          html += `<option value="${opt}" ${sel}>${opt}</option>`;
+        });
+        html += `</select>`;
+      }
+    } else if (f.type === 'range') {
+      html += `<input type="range" name="${f.name}" class="form-range" min="${f.min}" max="${f.max}" value="${record[f.name]}" ${f.required?'required':''}><small class="form-text text-muted">${f.description}</small>`;
+    } else if (f.type === 'file') {
+      html += `<input type="file" name="${f.name}" class="form-control" accept="image/*"><img src="${record.image_url}" class="img-thumbnail mt-2" style="max-height:100px;">`;
+    } else {
+      html += `<input type="${f.type}" name="${f.name}" class="form-control" value="${record[f.name]||''}" placeholder="${f.placeholder||''}" ${f.required?'required':''}>`;
+    }
+    html += `</div>`;
+  });
+
+  html += `
+          <div class="col-12 mt-4"><button type="submit" class="btn btn-green w-100"><i class="fas fa-save me-2"></i>Actualizar</button></div>
+        </form>
+        <div id="updateResult" class="mt-3"></div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+  document.getElementById('updateForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = e.target;
+    const type = document.getElementById('recordType').value;
+    const id = form.elements['id'].value;
+    const resDiv = document.getElementById('updateResult');
+
+    resDiv.innerHTML = `
+        <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Actualizando registro...</p>
+        </div>`;
+
+    try {
+        // Crear un objeto para los datos
+        const updateData = {};
+
+        // Lista de campos numéricos
+        const numericFields = [
+            'age',
+            'bothered_by_worries',
+            'difficulty_concentrating',
+            'comparison_feelings',
+            'feel_depressed',
+            'fluctuation_interest',
+            'sleep_issues',
+            'usage_without_purpose',
+            'distraction_when_busy',
+            'restless_without_social_media',
+            'easily_distracted',
+            'compare_with_successful_people',
+            'seek_validation'
+        ];
+
+        // Recorrer los elementos del formulario
+        for (const element of form.elements) {
+            if (!element.name || element.name === 'id') continue;
+
+            // Manejar checkboxes para selección múltiple
+            if (element.type === 'checkbox') {
+                if (element.checked) {
+                    if (!updateData[element.name]) {
+                        updateData[element.name] = [];
+                    }
+                    updateData[element.name].push(element.value);
+                }
+                continue;
+            }
+
+            // Manejar archivos (los omitimos por ahora)
+            if (element.type === 'file') continue;
+
+            // Obtener el valor y eliminar espacios en blanco
+            let value = element.value.trim();
+            if (!value) continue;
+
+            // Convertir valores numéricos
+            if (numericFields.includes(element.name)) {
+                const numValue = parseInt(value);
+                if (!isNaN(numValue)) {
+                    updateData[element.name] = numValue;
+                }
+            } else {
+                updateData[element.name] = value;
+            }
+        }
+
+        console.log('Datos a enviar:', updateData);
+
+        // Enviar la solicitud
+        const resp = await fetch(`/${type}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData)
+        });
+
+        if (!resp.ok) {
+            const error = await resp.text();
+            throw new Error(error);
+        }
+
+        resDiv.innerHTML = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>¡Registro actualizado correctamente!
+            </div>`;
+
+        setTimeout(() => fetchRecord(), 1500);
+    } catch(e) {
+        resDiv.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>Error: ${e.message}
+            </div>`;
+        console.error('Error al actualizar:', e);
+    }
+});
+
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    // Si hay parámetros en la URL, cargar automáticamente
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('type') && params.has('id')) {
+        document.getElementById('recordType').value = params.get('type');
+        document.getElementById('recordId').value = params.get('id');
+        fetchRecord();
+    }
+});
+</script>
+
+<style>
+:root{--blue:#1a3a8f;--light-blue:#4fc3f7;--green:#0b7150;--light-green:#81c784;--bg-blue:#e6f0ff;}
+.btn-blue{background:var(--blue);color:#fff;border:none;} .btn-blue:hover{background:#122a6f;}
+.btn-green{background:var(--green);color:#fff;border:none;} .btn-green:hover{background:#085d40;}
+.form-label{font-weight:600;color:var(--blue);} .form-range{height:25px;}
+</style>
+{% endblock %}
