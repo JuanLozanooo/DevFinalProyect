@@ -1,7 +1,7 @@
 from typing import List, Optional
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from social_media_models import *
+from app.social_media_models import *
 
 
 class SocialMediaOperations:
@@ -90,7 +90,7 @@ class SocialMediaOperations:
             await session.rollback()
             print(f"Error details: {str(e)}")
             raise Exception(f"Error al procesar la eliminación: {e}")
-        
+
     @staticmethod
     async def get_deleted_social_media(session: AsyncSession) -> List[DeletedSocialMedia]:
         """Obtiene todos los registros eliminados de redes sociales"""
