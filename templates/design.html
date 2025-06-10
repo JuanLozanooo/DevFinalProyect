@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}
+Fase de Diseño
+{% endblock %}
+
+{% block content %}
+<section style="background-color: #f2f6fa; padding: 2rem;">
+  <h1 class="text-center" style="color: #1a3a8f; font-size: 2.5rem; margin-bottom: 1rem;">
+    Fase de diseño del proyecto
+  </h1>
+
+  <div class="container" style="max-width: 900px;">
+    <div class="p-4 bg-white rounded-4 shadow-sm">
+      <p>
+        Durante esta fase se estructuró el diseño funcional y visual del sistema. Este proyecto busca analizar cómo el uso de redes sociales impacta en la salud mental. Por eso, el diseño de la plataforma permite cargar, visualizar y analizar datos de forma accesible.
+      </p>
+      <p>
+        Se utilizaron tecnologías como <strong>FastAPI</strong> para la lógica del backend y <strong>Jinja2</strong> para el renderizado dinámico en el frontend. Las plantillas están estilizadas con una paleta armónica de azules y verdes, que representan profesionalismo y confianza.
+      </p>
+      <p>
+        Se trabajó en una arquitectura clara que incluye secciones de creación, eliminación, visualización de registros y consulta, facilitando la navegación y la interacción con los datos.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section style="padding: 2rem;">
+  <h2 class="text-center" style="color: #1a3a8f; font-size: 2rem; margin-bottom: 2rem;">
+    Diagrama de Clases
+  </h2>
+
+  <section style="padding: 2rem;">
+
+  <div class="container d-flex flex-wrap justify-content-center gap-4">
+    <div class="text-center">
+      <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes//salud_mental.png"
+           alt="Modelo Salud Mental"
+           class="img-fluid rounded shadow"
+           style="max-width: 420px;">
+      <p class="mt-2 fw-bold" style="color: #1a3a8f;">Modelo Salud Mental</p>
+    </div>
+
+    <div class="text-center">
+      <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes//redes_sociales.png"
+           alt="Modelo Redes Sociales"
+           class="img-fluid rounded shadow"
+           style="max-width: 420px;">
+      <p class="mt-2 fw-bold" style="color: #0c6e4e;">Modelo Redes Sociales</p>
+    </div>
+  </div>
+</section>
+
+</section>
+
+<section style="padding: 2rem;">
+  <h2 class="text-center" style="color: #0c6e4e; font-size: 2rem; margin-bottom: 2rem;">
+    Mapa de Endpoints del Proyecto
+  </h2>
+
+  <div class="container">
+    {% set categorias = {
+      "Página Principal": [
+        ("GET", "/", "Root")
+      ],
+      "Salud Mental": [
+        ("GET", "/mental_health", "Get Mental Health"),
+        ("POST", "/mental_health", "Create Mental Health Endpoint"),
+        ("GET", "/mental_health/search_mental_health_by_age", "Search by Age"),
+        ("GET", "/mental_health/search_mental_health_by_field", "Search by Field"),
+        ("GET", "/mental_health/by_sleep_issues", "Filter by Sleep Issues"),
+        ("GET", "/mental_health/{mental_health_id}", "Get by ID"),
+        ("PUT", "/mental_health/{mental_health_id}", "Update by ID"),
+        ("POST", "/mental_health/upload", "Create with Image"),
+        ("POST", "/mental_health/delete", "Delete by ID")
+      ],
+      "Redes Sociales": [
+        ("GET", "/social_media", "Get Social Media"),
+        ("POST", "/social_media", "Create Social Media"),
+        ("GET", "/social_media/search_by_gender", "Search by Gender"),
+        ("GET", "/social_media/search_by_field", "Search by Field"),
+        ("GET", "/social_media/by_age", "Filter by Age"),
+        ("GET", "/social_media/{social_media_id}", "Get by ID"),
+        ("PUT", "/social_media/{social_media_id}", "Update by ID"),
+        ("POST", "/social_media/upload", "Create with Image"),
+        ("POST", "/social_media/delete", "Delete by ID")
+      ],
+      "Eliminados": [
+        ("GET", "/mental_health/deleted", "Get Deleted Mental Health"),
+        ("GET", "/social_media/deleted", "Get Deleted Social Media"),
+        ("GET", "/deleted", "View Deleted")
+      ],
+      "Creación": [
+        ("GET", "/create", "Create Page")
+      ],
+      "Actualización": [
+        ("GET", "/update", "Update Page")
+      ],
+      "Consultas": [
+        ("GET", "/query", "Query Page")
+      ],
+      "Registros": [
+        ("GET", "/show", "Show Records")
+      ],
+      "Desarrollador y Proyecto": [
+        ("GET", "/developer", "Developer Info"),
+        ("GET", "/goal", "Objetivo Proyecto"),
+        ("GET", "/planning", "Planeación Proyecto"),
+        ("GET", "/design", "Diseño Proyecto")
+      ]
+    } %}
+
+    {% for categoria, endpoints in categorias.items() %}
+    <div class="mb-5">
+      <h3 class="fw-bold text-primary border-bottom pb-2 mb-3" style="color: #1a3a8f;">
+        {{ categoria }}
+      </h3>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Método</th>
+              <th>Ruta</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for metodo, ruta, descripcion in endpoints %}
+            <tr>
+              <td class="fw-bold">{{ metodo }}</td>
+              <td><code>{{ ruta }}</code></td>
+              <td>{{ descripcion }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section style="background-color: #f2f6fa; padding: 2rem;">
+  <h2 class="text-center" style="color: #0c6e4e; font-size: 2rem; margin-bottom: 2rem;">
+    Wireframes y Mockups del Sistema
+  </h2>
+
+  <div class="container">
+    <p class="mb-4">
+      Los siguientes diseños representan la estructura visual propuesta para el sistema. Se partió con wireframes para la validación temprana de las pantallas, y luego se crearon mockups de alta fidelidad con la estética final.
+    </p>
+
+    {% set secciones = [
+      ("Inicio", "home"),
+      ("Crear", "create"),
+      ("Eliminar", "delete"),
+      ("Buscar", "query"),
+      ("Actualizar", "update"),
+      ("Diseño", "design"),
+      ("Objetivo", "goal"),
+      ("Desarrollador", "developer")
+    ] %}
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      {% for titulo, clave in secciones %}
+      <div class="col">
+        <div class="card shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3 text-primary">{{ titulo }}</h5>
+            <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+              <div>
+                <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes//wireframe.png" class="img-fluid rounded" alt="Wireframe {{ titulo }}" style="max-width: 200px;">
+                <p class="mt-2 text-muted">Wireframe</p>
+              </div>
+              <div>
+                <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes//mockup.png" class="img-fluid rounded" alt="Mockup {{ titulo }}" style="max-width: 200px;">
+                <p class="mt-2 text-muted">Mockup</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}
