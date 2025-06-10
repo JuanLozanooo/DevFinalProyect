@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Planeación{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="header-section mb-5 p-4 rounded-4"
+       style="background: linear-gradient(135deg, #1a3a8f 0%, #0c6e4e 100%);">
+    <h2 class="display-5 fw-bold text-center text-white mb-3"
+        style="text-shadow: 1px 1px 4px rgba(0,0,0,0.4);">
+      Planeación del Proyecto
+    </h2>
+    <p class="text-center text-light mb-0">
+      Exploración del impacto de las redes sociales en la salud mental usando datos de Kaggle.
+    </p>
+  </div>
+
+  <section class="mb-5">
+    <h3 class="fw-bold text-primary mb-3">Objetivo General</h3>
+    <div class="card border-0 shadow rounded-4 p-4 bg-light">
+      <p class="mb-0">
+        Analizar la relación entre el uso de redes sociales y los indicadores de salud mental mediante el estudio de datasets de Kaggle, identificando patrones de dependencia o adicción a las plataformas digitales y su impacto en el bienestar emocional, con el fin de comprender mejor los efectos del uso excesivo y fomentar estrategias de prevención.
+      </p>
+    </div>
+  </section>
+
+  <section class="mb-5">
+    <h3 class="fw-bold text-success mb-3">Casos de Uso</h3>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="bg-success bg-opacity-10 border-start border-4 border-success rounded-3 p-3 h-100">
+          <h5 class="fw-semibold">Visualización de registros</h5>
+          <p class="mb-1">Ver registros de salud mental y redes sociales en la plataforma.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="bg-primary bg-opacity-10 border-start border-4 border-primary rounded-3 p-3 h-100">
+          <h5 class="fw-semibold">Crear nuevos registros</h5>
+          <p class="mb-1">Registrar datos nuevos con opción de subir imagen.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="bg-danger bg-opacity-10 border-start border-4 border-danger rounded-3 p-3 h-100">
+          <h5 class="fw-semibold">Eliminar registros</h5>
+          <p class="mb-1">Eliminar registros de forma lógica manteniendo historial.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="bg-info bg-opacity-10 border-start border-4 border-info rounded-3 p-3 h-100">
+          <h5 class="fw-semibold">Buscar por género</h5>
+          <p class="mb-1">Filtrar datos de redes sociales por género de usuario.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="bg-warning bg-opacity-10 border-start border-4 border-warning rounded-3 p-3 h-100">
+          <h5 class="fw-semibold">Buscar por campo</h5>
+          <p class="mb-1">Consultar registros según un campo y valor específico.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="bg-secondary bg-opacity-10 border-start border-4 border-secondary rounded-3 p-3 h-100">
+          <h5 class="fw-semibold">Filtrar por edad</h5>
+          <p class="mb-1">Consultar usuarios jóvenes y adultos según su edad.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="bg-dark bg-opacity-10 border-start border-4 border-dark rounded-3 p-3 h-100">
+          <h5 class="fw-semibold">Consultar por ID</h5>
+          <p class="mb-1">Buscar un registro específico por su número de identificación.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="bg-light border-start border-4 border-primary rounded-3 p-3 h-100">
+          <h5 class="fw-semibold">Actualizar registros</h5>
+          <p class="mb-1">Modificar información previamente registrada en el sistema.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-5">
+    <h3 class="fw-bold text-primary mb-3">Modelo de Datos: Salud Mental</h3>
+    <div class="table-responsive mb-3">
+      <table class="table table-striped table-bordered align-middle shadow-sm">
+        <thead class="table-primary">
+          <tr><th>Campo</th><th>Tipo</th><th>Restricciones</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>id</td><td>int</td><td>Clave primaria</td></tr>
+          <tr><td>date</td><td>str</td><td>3 a 50 caracteres</td></tr>
+          <tr><td>age</td><td>int</td><td>Entre 10 y 100</td></tr>
+          <tr><td>gender</td><td>str</td><td>1 a 30 caracteres</td></tr>
+          <tr><td>relationship_status</td><td>str</td><td>1 a 50 caracteres</td></tr>
+          <tr><td>bothered_by_worries</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>difficulty_concentrating</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>comparison_feelings</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>feel_depressed</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>fluctuation_interest</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>sleep_issues</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>image_url</td><td>str</td><td>URL válida</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes//salud_mental.png" alt="Modelo de Datos Salud Mental" class="img-fluid rounded shadow-sm mb-4">
+  </section>
+
+  <section class="mb-5">
+    <h3 class="fw-bold text-success mb-3">Modelo de Datos: Redes Sociales</h3>
+    <div class="table-responsive mb-3">
+      <table class="table table-striped table-bordered align-middle shadow-sm">
+        <thead class="table-success">
+          <tr><th>Campo</th><th>Tipo</th><th>Restricciones</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>id</td><td>int</td><td>Clave primaria</td></tr>
+          <tr><td>date</td><td>str</td><td>3 a 50 caracteres</td></tr>
+          <tr><td>age</td><td>int</td><td>Entre 10 y 100</td></tr>
+          <tr><td>gender</td><td>str</td><td>1 a 30 caracteres</td></tr>
+          <tr><td>occupation_status</td><td>str</td><td>1 a 50 caracteres</td></tr>
+          <tr><td>organization_affiliation</td><td>str</td><td>Máximo 100 caracteres</td></tr>
+          <tr><td>uses_social_media</td><td>str</td><td>Yes o No</td></tr>
+          <tr><td>platforms_used</td><td>str</td><td>Separadas por coma</td></tr>
+          <tr><td>daily_use_average</td><td>str</td><td>Máximo 50 caracteres</td></tr>
+          <tr><td>usage_without_purpose</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>distraction_when_busy</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>restless_without_social_media</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>easily_distracted</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>compare_with_successful_people</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>seek_validation</td><td>int</td><td>Valor entre 1 y 5</td></tr>
+          <tr><td>image_url</td><td>str</td><td>URL válida</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <img src="https://grphvhodavqcygfcgfnb.supabase.co/storage/v1/object/public/imagenes//redes_sociales.png" alt="Modelo de Datos Redes Sociales" class="img-fluid rounded shadow-sm mb-4">
+  </section>
+
+  <section>
+    <h3 class="fw-bold text-dark mb-3">Fuente de Datos</h3>
+    <div class="bg-light p-4 rounded-3 border">
+      <p class="mb-2">Se usó un dataset disponible en Kaggle:</p>
+      <a href="https://www.kaggle.com/datasets/souvikahmed071/social-media-and-mental-health" target="_blank" class="btn btn-outline-primary">
+        Ver dataset en Kaggle
+      </a>
+    </div>
+  </section>
+</div>
+{% endblock %}
