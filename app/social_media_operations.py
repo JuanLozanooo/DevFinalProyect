@@ -46,23 +46,51 @@ class SocialMediaOperations:
         await session.refresh(entry)
         return entry
 
-    @staticmethod
-    async def delete_social_media(session: AsyncSession, entry_id: int) -> Optional[SocialMedia]:
-        """Elimina un registro por ID y lo guarda en deleted_social_media"""
-        entry = await session.get(SocialMedia, entry_id)
-        if not entry:
-            return None
-
+    async def delete_social_media(session: AsyncSession, id: int) -> bool:
         try:
-            deleted_entry = DeletedSocialMedia(**entry.dict())
-        except ValueError as e:
-            # Manejar errores de validación
-            raise ValueError(f"Error al validar los datos para la tabla eliminada: {e}")
+            stmt = select(SocialMedia).where(SocialMedia.id == id)
+            result = await session.execute(stmt)
+            social_media = result.scalar_one_or_none()
 
-        await session.delete(entry)
-        await session.commit()
-        return entry
+            if not social_media:
+                return False
 
+            # Normalizar valores de uses_social_media
+            uses_value = social_media.uses_social_media
+            if uses_value.lower() in ['sí', 'si', 'sí', 'yes']:
+                uses_value = "Yes"
+            elif uses_value.lower() in ['no']:
+                uses_value = "No"
+
+            deleted_record = DeletedSocialMedia(
+                id=social_media.id,
+                date=social_media.date,
+                age=social_media.age,
+                gender=social_media.gender,
+                occupation_status=social_media.occupation_status,
+                organization_affiliation=social_media.organization_affiliation,
+                uses_social_media=uses_value,  # Usar valor normalizado
+                platforms_used=social_media.platforms_used.strip('"').strip("'"),
+                daily_use_average=social_media.daily_use_average,
+                usage_without_purpose=social_media.usage_without_purpose,
+                distraction_when_busy=social_media.distraction_when_busy,
+                restless_without_social_media=social_media.restless_without_social_media,
+                easily_distracted=social_media.easily_distracted,
+                compare_with_successful_people=social_media.compare_with_successful_people,
+                seek_validation=social_media.seek_validation,
+                image_url=social_media.image_url
+            )
+
+            session.add(deleted_record)
+            await session.delete(social_media)
+            await session.commit()
+            return True
+
+        except Exception as e:
+            await session.rollback()
+            print(f"Error details: {str(e)}")
+            raise Exception(f"Error al procesar la eliminación: {e}")
+        
     @staticmethod
     async def get_deleted_social_media(session: AsyncSession) -> List[DeletedSocialMedia]:
         """Obtiene todos los registros eliminados de redes sociales"""

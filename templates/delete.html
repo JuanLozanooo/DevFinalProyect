@@ -429,26 +429,33 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('recordPreview').classList.add('d-none');
     });
 
-    // Enviar formulario de eliminación
+    // Eliminar registro
     document.getElementById('deleteForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const type = document.getElementById('deleteType').value;
         const id = document.getElementById('deleteId').value;
-
+        
         try {
-            const response = await fetch(`/${type}/delete`, {
+            // Primero obtenemos el registro original
+            const getResponse = await fetch(`/${type}/${id}`);
+            if (!getResponse.ok) throw new Error('No se pudo obtener el registro');
+            const originalData = await getResponse.json();
+
+            // Ahora enviamos la solicitud de eliminación
+            const deleteEndpoint = `/${type}/delete`;
+            const deleteResponse = await fetch(deleteEndpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: `id=${id}`
+                body: `id=${encodeURIComponent(id)}`
             });
 
-            if (!response.ok) {
-                throw new Error(await response.text());
+            if (!deleteResponse.ok) {
+                throw new Error(await deleteResponse.text());
             }
 
-            const result = await response.json();
+            const result = await deleteResponse.json();
             showAlert('success', result.message);
             document.getElementById('recordPreview').classList.add('d-none');
             document.getElementById('searchForm').reset();
@@ -457,7 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Mostrar alertas
     function showAlert(type, message) {
         const alertDiv = document.createElement('div');
         alertDiv.className = `alert alert-${type} alert-dismissible fade show`;

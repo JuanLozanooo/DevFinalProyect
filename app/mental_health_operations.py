@@ -54,14 +54,21 @@ class MentalHealthOperations:
             return None
 
         try:
+            # Crear entrada para la tabla de eliminados
             deleted_entry = DeletedMentalHealth(**entry.dict())
+            # Agregar a la sesión
+            session.add(deleted_entry)
+            # Eliminar entrada original
+            await session.delete(entry)
+            # Guardar cambios
+            await session.commit()
+            return entry
         except ValueError as e:
-            # Manejar errores de validación
+            await session.rollback()
             raise ValueError(f"Error al validar los datos para la tabla de eliminados: {e}")
-
-        await session.delete(entry)
-        await session.commit()
-        return entry
+        except Exception as e:
+            await session.rollback()
+            raise Exception(f"Error al procesar la eliminación: {e}")
 
     @staticmethod
     async def get_deleted_mental_health(session: AsyncSession) -> List[DeletedMentalHealth]:
