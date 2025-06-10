@@ -113,13 +113,33 @@ const formFields = {
 async function fetchRecord() {
   const type = document.getElementById('recordType').value;
   const id = document.getElementById('recordId').value;
+
+  if (!id) {
+    alert('Por favor ingrese un ID válido');
+    return;
+  }
+
+  const resultsDiv = document.getElementById('formContainer');
+  resultsDiv.innerHTML = `
+    <div class="text-center py-3">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2">Buscando registro...</p>
+    </div>`;
+
   try {
     const res = await fetch(`/${type}/${id}`);
-    if (!res.ok) throw new Error('Registro no encontrado');
+    if (!res.ok) {
+      const error = await res.text();
+      throw new Error(error || 'Registro no encontrado');
+    }
+
     const record = await res.json();
     showUpdateForm(type, record);
   } catch(err) {
-    alert('Error: ' + err.message);
+    document.getElementById('formContainer').innerHTML = `
+      <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle me-2"></i>Error: ${err.message}
+      </div>`;
   }
 }
 
@@ -140,24 +160,32 @@ function showUpdateForm(type, record) {
     html += `<div class="col-md-6 mb-3"><label class="form-label"><i class="${f.icon} me-1"></i>${f.label}:</label>`;
     if (f.type === 'select') {
       if (f.multiple) {
+        // Para redes sociales - platforms_used
+        const currentPlatforms = record[f.name] ? record[f.name].split(',').map(p => p.trim()) : [];
         f.options.forEach(opt => {
-          const checked = (record[f.name]||[]).includes(opt)? 'checked':'';
+          const checked = currentPlatforms.includes(opt) ? 'checked' : '';
           html += `<div class="form-check"><input class="form-check-input" type="checkbox" name="${f.name}" value="${opt}" ${checked}><label class="form-check-label">${opt}</label></div>`;
         });
       } else {
-        html += `<select name="${f.name}" class="form-select" style="border-color: var(--light-blue);" ${f.required?'required':''}><option value="">Seleccione</option>`;
+        html += `<select name="${f.name}" class="form-select" style="border-color: var(--light-blue);"><option value="">Seleccione</option>`;
         f.options.forEach(opt => {
-          const sel = record[f.name] === opt ? 'selected':'';
+          const sel = record[f.name] === opt ? 'selected' : '';
           html += `<option value="${opt}" ${sel}>${opt}</option>`;
         });
         html += `</select>`;
       }
     } else if (f.type === 'range') {
-      html += `<input type="range" name="${f.name}" class="form-range" min="${f.min}" max="${f.max}" value="${record[f.name]}" ${f.required?'required':''}><small class="form-text text-muted">${f.description}</small>`;
+      html += `<input type="${f.type}" name="${f.name}" class="form-range" min="${f.min}" max="${f.max}" value="${record[f.name] || 3}"><small class="form-text text-muted">${f.description}</small>`;
     } else if (f.type === 'file') {
-      html += `<input type="file" name="${f.name}" class="form-control" accept="image/*"><img src="${record.image_url}" class="img-thumbnail mt-2" style="max-height:100px;">`;
+      html += `
+        <input type="file" name="${f.name}" class="form-control" accept="image/*">
+        <div class="mt-2">
+          <small class="form-text">${f.description}</small>
+          <img src="${record.image_url}" class="img-thumbnail mt-2" style="max-height:100px;">
+        </div>
+      `;
     } else {
-      html += `<input type="${f.type}" name="${f.name}" class="form-control" value="${record[f.name]||''}" placeholder="${f.placeholder||''}" ${f.required?'required':''}>`;
+      html += `<input type="${f.type}" name="${f.name}" class="form-control" value="${record[f.name]||''}" placeholder="${f.placeholder||''}">`;
     }
     html += `</div>`;
   });
@@ -171,6 +199,8 @@ function showUpdateForm(type, record) {
   `;
 
   container.innerHTML = html;
+
+  // Manejar el envío del formulario
   document.getElementById('updateForm').addEventListener('submit', async e => {
     e.preventDefault();
     const form = e.target;
@@ -185,99 +215,55 @@ function showUpdateForm(type, record) {
         </div>`;
 
     try {
-        // Crear un objeto para los datos
-        const updateData = {};
+      const formData = new FormData(form);
 
-        // Lista de campos numéricos
-        const numericFields = [
-            'age',
-            'bothered_by_worries',
-            'difficulty_concentrating',
-            'comparison_feelings',
-            'feel_depressed',
-            'fluctuation_interest',
-            'sleep_issues',
-            'usage_without_purpose',
-            'distraction_when_busy',
-            'restless_without_social_media',
-            'easily_distracted',
-            'compare_with_successful_people',
-            'seek_validation'
-        ];
-
-        // Recorrer los elementos del formulario
-        for (const element of form.elements) {
-            if (!element.name || element.name === 'id') continue;
-
-            // Manejar checkboxes para selección múltiple
-            if (element.type === 'checkbox') {
-                if (element.checked) {
-                    if (!updateData[element.name]) {
-                        updateData[element.name] = [];
-                    }
-                    updateData[element.name].push(element.value);
-                }
-                continue;
-            }
-
-            // Manejar archivos (los omitimos por ahora)
-            if (element.type === 'file') continue;
-
-            // Obtener el valor y eliminar espacios en blanco
-            let value = element.value.trim();
-            if (!value) continue;
-
-            // Convertir valores numéricos
-            if (numericFields.includes(element.name)) {
-                const numValue = parseInt(value);
-                if (!isNaN(numValue)) {
-                    updateData[element.name] = numValue;
-                }
-            } else {
-                updateData[element.name] = value;
-            }
-        }
-
-        console.log('Datos a enviar:', updateData);
-
-        // Enviar la solicitud
-        const resp = await fetch(`/${type}/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updateData)
+      // Procesar campos múltiples (platforms_used)
+      if (type === 'social_media') {
+        const platforms = [];
+        form.querySelectorAll('input[name="platforms_used"]:checked').forEach(cb => {
+          platforms.push(cb.value);
         });
+        formData.set('platforms_used', platforms.join(', '));
+      }
 
-        if (!resp.ok) {
-            const error = await resp.text();
-            throw new Error(error);
-        }
+      // Enviar solicitud PUT
+      const resp = await fetch(`/${type}/${id}`, {
+        method: 'PUT',
+        body: formData
+      });
 
-        resDiv.innerHTML = `
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle me-2"></i>¡Registro actualizado correctamente!
-            </div>`;
+      if (!resp.ok) {
+        const error = await resp.text();
+        throw new Error(error || 'Error al actualizar el registro');
+      }
 
-        setTimeout(() => fetchRecord(), 1500);
+      const result = await resp.json();
+      resDiv.innerHTML = `
+          <div class="alert alert-success">
+              <i class="fas fa-check-circle me-2"></i>¡Registro actualizado correctamente!
+          </div>`;
+
+      // Actualizar el formulario con los nuevos datos
+      setTimeout(() => fetchRecord(), 1500);
     } catch(e) {
-        resDiv.innerHTML = `
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle me-2"></i>Error: ${e.message}
-            </div>`;
-        console.error('Error al actualizar:', e);
+      resDiv.innerHTML = `
+          <div class="alert alert-danger">
+              <i class="fas fa-exclamation-circle me-2"></i>Error: ${e.message}
+          </div>`;
+      console.error('Error al actualizar:', e);
     }
-});
+  });
+}
 
 // Inicializar al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
-    // Si hay parámetros en la URL, cargar automáticamente
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('type') && params.has('id')) {
-        document.getElementById('recordType').value = params.get('type');
-        document.getElementById('recordId').value = params.get('id');
-        fetchRecord();
-    }
+  // Si hay parámetros en la URL, cargar automáticamente
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('type') && params.has('id')) {
+    document.getElementById('recordType').value = params.get('type');
+    document.getElementById('recordId').value = params.get('id');
+    fetchRecord();
+  }
 });
 </script>
 
@@ -286,5 +272,37 @@ document.addEventListener('DOMContentLoaded', () => {
 .btn-blue{background:var(--blue);color:#fff;border:none;} .btn-blue:hover{background:#122a6f;}
 .btn-green{background:var(--green);color:#fff;border:none;} .btn-green:hover{background:#085d40;}
 .form-label{font-weight:600;color:var(--blue);} .form-range{height:25px;}
+
+/* Mejoras visuales */
+.card {
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.form-control, .form-select {
+  border: 1px solid #ced4da;
+  transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #4fc3f7;
+  box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.25);
+}
+
+.alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.img-thumbnail {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+}
 </style>
 {% endblock %}

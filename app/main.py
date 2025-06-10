@@ -128,37 +128,42 @@ async def create_mental_health_endpoint(mental_health: MentalHealth, session: As
 async def update_mental_health_endpoint(
         mental_health_id: int,
         date: str = Form(None),
-        age: str = Form(None),
+        age: int = Form(None),                     # <-- cambiar a int
         gender: str = Form(None),
         relationship_status: str = Form(None),
-        bothered_by_worries: str = Form(None),
-        difficulty_concentrating: str = Form(None),
-        comparison_feelings: str = Form(None),
-        feel_depressed: str = Form(None),
-        fluctuation_interest: str = Form(None),
-        sleep_issues: str = Form(None),
+        bothered_by_worries: int = Form(None),     # <-- cambiar a int
+        difficulty_concentrating: int = Form(None),# <-- cambiar a int
+        comparison_feelings: int = Form(None),
+        feel_depressed: int = Form(None),
+        fluctuation_interest: int = Form(None),
+        sleep_issues: int = Form(None),
         image_file: UploadFile = None,
         session: AsyncSession = Depends(get_session)
 ):
-    """
-    Actualiza un registro de salud mental.
-    Solo los campos enviados en la solicitud serán actualizados.
-    """
     update_data = {}
 
-    # Recopilar campos no nulos
-    if date: update_data["date"] = date
-    if age: update_data["age"] = age
-    if gender: update_data["gender"] = gender
-    if relationship_status: update_data["relationship_status"] = relationship_status
-    if bothered_by_worries: update_data["bothered_by_worries"] = bothered_by_worries
-    if difficulty_concentrating: update_data["difficulty_concentrating"] = difficulty_concentrating
-    if comparison_feelings: update_data["comparison_feelings"] = comparison_feelings
-    if feel_depressed: update_data["feel_depressed"] = feel_depressed
-    if fluctuation_interest: update_data["fluctuation_interest"] = fluctuation_interest
-    if sleep_issues: update_data["sleep_issues"] = sleep_issues
+    if date:
+        update_data["date"] = date
+    if age is not None:
+        update_data["age"] = age
+    if gender:
+        update_data["gender"] = gender
+    if relationship_status:
+        update_data["relationship_status"] = relationship_status
+    if bothered_by_worries is not None:
+        update_data["bothered_by_worries"] = bothered_by_worries
+    if difficulty_concentrating is not None:
+        update_data["difficulty_concentrating"] = difficulty_concentrating
+    if comparison_feelings is not None:
+        update_data["comparison_feelings"] = comparison_feelings
+    if feel_depressed is not None:
+        update_data["feel_depressed"] = feel_depressed
+    if fluctuation_interest is not None:
+        update_data["fluctuation_interest"] = fluctuation_interest
+    if sleep_issues is not None:
+        update_data["sleep_issues"] = sleep_issues
 
-    # Si hay una nueva imagen, procesarla
+    # Procesar imagen si viene
     if image_file and image_file.filename:
         image_url = await save_file(image_file)
         if isinstance(image_url, dict) and "error" in image_url:
