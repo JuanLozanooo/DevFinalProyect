@@ -10,8 +10,8 @@ import os
 from images.upload_images import save_file
 from app.mental_health_models import *
 from app.social_media_models import *
-from mental_health_operations import MentalHealthOperations
-from social_media_operations import SocialMediaOperations
+from app.mental_health_operations import MentalHealthOperations
+from app.social_media_operations import SocialMediaOperations
 
 app = FastAPI(
     title="Impacto De Las Redes Sociales En La Salud Mental",
